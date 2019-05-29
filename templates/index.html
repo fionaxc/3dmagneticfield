@@ -15,8 +15,20 @@
 
     <title> {% block title %}Physics{% endblock %}</title>
   </head>
+  <style>
+    #playground {
+      border: 1px solid black;
+      padding-left: 0;
+      padding-right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
+  </style>
   <body>
     {% block body %}<h1 class="text-center">3D Magnetic Field</h1>{% endblock %}
+    <canvas height="600" width="600" id="playground"></canvas><br>
+    <button id="clear">clear</button><br>
   </body>
 
   <script src="{{ url_for('static', filename='js/physics.js') }}"></script>
