@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="icon"
+      type="image/png"
+      href="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Magnetic_quadrupole_moment.svg/1200px-Magnetic_quadrupole_moment.svg.png">
+
+    <style type="text/css">
+    /* #background {
+        background-image: linear-gradient(#EFBDEB,#B68CB8);
+    } */
+    </style>
+
+    <title> {% block title %}Physics{% endblock %}</title>
+  </head>
+  <body>
+    {% block body %}<h1 class="text-center">3D Magnetic Field</h1>{% endblock %}
+  </body>
+
+  <script src="{{ url_for('static', filename='js/physics.js') }}"></script>
+</html>
