@@ -39,25 +39,25 @@
   <body>
     <h1 class="text-center">3D Magnetic Field</h1>
     <div id="board">
-      <canvas id="playground"></canvas><br>
-      <select id="options">
-        <option id="linecur">Line of Current</option>
-        <option id="doublelinecur">Double Line of Current</option>
-        <option id="dipolelinecur">Dipole Line of Current</option>
-        <option id="uniform">Uniform Field</option>
-        <option id="movcharge">Moving Charge</option>
-        <option id="doublemovcharge">Double Moving Charge</option>
-        <option id="dipolemovcharge">Dipole Moving Charge</option>
-        <option id="loopcur">Loop of Current</option>
-        <option id="doubleloopcur">Double Loops of Current</option>
-        <option id="opplinecur">Opposing Lines of Current</option>
-        <option id="stackedloopcur">Stacked Loops of Current</option>
-        <option id="stackedopploopcur">Stacked, Opposing Loops of Current</option>
-        <option id="conloop">Concentric Loops</option>
-        <option id="solenoid">Solenoid</option>
-        <option id="toroid">Toroid</option>
-        <option id="square">Square Loop</option>
-        <option id="rect">Rectangular Loop</option>
+      <canvas id="playground" onmousedown="handleMouseDown()"></canvas><br>
+      <select onchange="getChoice()" id="options">
+        <option value="linecur">Line of Current</option>
+        <option value="doublelinecur">Double Line of Current</option>
+        <option value="dipolelinecur">Dipole Line of Current</option>
+        <option value="uniform">Uniform Field</option>
+        <option value="movcharge">Moving Charge</option>
+        <option value="doublemovcharge">Double Moving Charge</option>
+        <option value="dipolemovcharge">Dipole Moving Charge</option>
+        <option value="loopcur">Loop of Current</option>
+        <option value="doubleloopcur">Double Loops of Current</option>
+        <option value="opplinecur">Opposing Lines of Current</option>
+        <option value="stackedloopcur">Stacked Loops of Current</option>
+        <option value="stackedopploopcur">Stacked, Opposing Loops of Current</option>
+        <option value="conloop">Concentric Loops</option>
+        <option value="solenoid">Solenoid</option>
+        <option value="toroid">Toroid</option>
+        <option value="square">Square Loop</option>
+        <option value="rect">Rectangular Loop</option>
       </select><br><br>
       <button id="reset">Reset</button><br>
       <button id="smth">Tog something</button>
