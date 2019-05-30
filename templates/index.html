@@ -18,18 +18,52 @@
   <style>
     #playground {
       border: 1px solid black;
-      padding-left: 0;
-      padding-right: 0;
-      margin-left: auto;
-      margin-right: auto;
+      background-color: black;
       display: block;
+      float: left;
+      height: 600px;
+      width: 600px;
+    }
+    #board {
+      background-color: gray;
+      height: 600px;
+      margin-left: 23%;
+      width: 800px;
+    }
+    #options {
+      width: 160px;
+      height: 20px;
+      left: 10px;
     }
   </style>
   <body>
-    {% block body %}<h1 class="text-center">3D Magnetic Field</h1>{% endblock %}
-    <canvas height="600" width="600" id="playground"></canvas><br>
-    <button id="clear">clear</button><br>
+    <h1 class="text-center">3D Magnetic Field</h1>
+    <div id="board">
+      <canvas id="playground"></canvas><br>
+      <select id="options">
+        <option id="linecur">Line of Current</option>
+        <option id="doublelinecur">Double Line of Current</option>
+        <option id="dipolelinecur">Dipole Line of Current</option>
+        <option id="uniform">Uniform Field</option>
+        <option id="movcharge">Moving Charge</option>
+        <option id="doublemovcharge">Double Moving Charge</option>
+        <option id="dipolemovcharge">Dipole Moving Charge</option>
+        <option id="loopcur">Loop of Current</option>
+        <option id="doubleloopcur">Double Loops of Current</option>
+        <option id="opplinecur">Opposing Lines of Current</option>
+        <option id="stackedloopcur">Stacked Loops of Current</option>
+        <option id="stackedopploopcur">Stacked, Opposing Loops of Current</option>
+        <option id="conloop">Concentric Loops</option>
+        <option id="solenoid">Solenoid</option>
+        <option id="toroid">Toroid</option>
+        <option id="square">Square Loop</option>
+        <option id="rect">Rectangular Loop</option>
+      </select><br><br>
+      <button id="reset">Reset</button><br>
+      <button id="smth">Tog something</button>
+    </div>
   </body>
 
+	<script src="matter.js" type="text/javascript"></script>
   <script src="{{ url_for('static', filename='js/physics.js') }}"></script>
 </html>
