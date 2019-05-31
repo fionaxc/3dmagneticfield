@@ -3,12 +3,17 @@ var ctx = c.getContext("2d");
 var reset = document.getElementById("reset");
 var rectWidth = 600;
 var rectHeight = 600;
-var smth = document.getElementById("smth");
 var choice;
 var canMouseX;
 var canMouseY;
+var offsetX=c.offsetLeft;
+var offsetY=c.offsetTop;
+var isDragging=false;
+var img = ctx.getImageData(0, 0, rectWidth, rectHeight);
+console.log(img)
 
 var newLine = function(e) {
+  console.log('draw')
   ctx.beginPath();
   ctx.moveTo(100, 100)
   ctx.lineTo(200, 50);
@@ -22,54 +27,56 @@ var setup = function(e) {
 }
 
 var getChoice = function(e) {
+
   choice = document.getElementById("options").value;
-  console.log(choice)
-  // if (choice == "linecur") {
-  //   return newLine;
-  // }
+  if (choice == "linecur") {
+    newLine();
+  }
+  else {
+    //draw other stuff
+    ctx.clearRect(0,0,rectWidth,rectHeight);
+  }
 }
 
-var drag = function(e) {
-    var img = ctx.getImageData(0, 0, rectWidth, rectHeight);
-    img.onload = function(){
-        ctx.putImageData(imgData, 0, 0);
-    };
+function handleMouseDown(x, y, e){
+  // console.log('0')
+  canMouseX=parseInt(x-offsetX);
+  canMouseY=parseInt(y-offsetY);
+  // set the drag flag
+  isDragging=true;
+}
 
-    var offsetX=c.offsetLeft;
-    var offsetY=c.offsetTop;
-    var isDragging=false;
+function handleMouseUp(x, y, e){
+  // console.log('1')
+  handleMouseDown();
+  // clear the drag flag
+  isDragging=false;
+}
 
-    function handleMouseUp(e){
-      canMouseX=parseInt(e.clientX-offsetX);
-      canMouseY=parseInt(e.clientY-offsetY);
-      // clear the drag flag
-      isDragging=false;
-    }
+function handleMouseOut(x, y, e){
+  // console.log('2')
+  canMouseX=parseInt(x-offsetX);
+  canMouseY=parseInt(y-offsetY);
+  // user has left the canvas, so clear the drag flag
+  //isDragging=false;
+}
 
-    function handleMouseOut(e){
-      canMouseX=parseInt(e.clientX-offsetX);
-      canMouseY=parseInt(e.clientY-offsetY);
-      // user has left the canvas, so clear the drag flag
-      //isDragging=false;
-    }
-
-    function handleMouseMove(e){
-      canMouseX=parseInt(e.clientX-offsetX);
-      canMouseY=parseInt(e.clientY-offsetY);
-      // if the drag flag is set, clear the canvas and draw the image
-      if(isDragging){
-          ctx.clearRect(0,0,canvasWidth,canvasHeight);
-          ctx.drawImage(img,canMouseX-128/2,canMouseY-120/2,128,120);
+function handleMouseMove(x, y, e){
+  // console.log('3')
+  canMouseX=parseInt(x-offsetX);
+  canMouseY=parseInt(y-offsetY);
+  // if the drag flag is set, clear the canvas and draw the image
+  if(isDragging){
+      ctx.clearRect(0,0,rectWidth,rectHeight);
+      // console.log(canMouseX-rectWidth/2+100);
+      // console.log(canMouseY-rectHeight/2+100);
+      // ctx.putImageData(img,rectWidth, rectHeight, canMouseX-rectWidth/2, canMouseY-rectHeight/2, img.width, img.height);
+      if (choice == "linecur") {
+        newLine();
       }
-    }
-
-    c.onmousedown(function(e){handleMouseDown(e);});
-    c.onmousemove(function(e){handleMouseMove(e);});
-    c.onmouseup(function(e){handleMouseUp(e);});
-    c.onmouseout(function(e){handleMouseOut(e);});
+      // ctx.drawImage(img,canMouseX-rectWidth/2,canMouseY-rectHeight/2,rectWidth,rectHeight);
+  }
 }
-
-
 
 reset.addEventListener('click', function(e){
   ctx.fillStyle = "#000000";
@@ -77,23 +84,24 @@ reset.addEventListener('click', function(e){
 }
 )
 
-smth.addEventListener('click', function(e){
-  ctx.fillStyle = "#ADD8E6";
-  ctx.fillRect(0, 0, rectWidth, rectHeight);
-}
+c.addEventListener('mousedown', function(e){
+  handleMouseDown(e.clientX, e.clientY)
+  }
 )
 
-c.addEventListener('click', function(e){
-  drag();
-}
+c.addEventListener('mouseup', function(e){
+  handleMouseUp(e.clientX, e.clientY)
+  }
 )
 
-function handleMouseDown(e){
-  console.log('hi')
-  canMouseX=parseInt(e.clientX-offsetX);
-  canMouseY=parseInt(e.clientY-offsetY);
-  // set the drag flag
-  isDragging=true;
-}
+c.addEventListener('mousedown', function(e){
+  handleMouseOut(e.clientX, e.clientY)
+  }
+)
+
+c.addEventListener('mousedown', function(e){
+  handleMouseMove(e.clientX, e.clientY)
+  }
+)
 
 setup();
