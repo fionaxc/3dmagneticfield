@@ -67,10 +67,10 @@ document.getElementById("playground").appendChild( renderer.domElement );
 
 var scene = new THREE.Scene();
 var center = new THREE.Vector3();
-var camera = new THREE.PerspectiveCamera(45, 1, 0.01, 300);
+var camera = new THREE.PerspectiveCamera(90, 1, 0.1,1000);
 
 camera.up = new THREE.Vector3(0, 0, 1);
-camera.position.x = 5;
+camera.position.set(-170,170,40);
 camera.lookAt(center);
 
 function drag(deltaX, deltaY) {
@@ -113,23 +113,15 @@ var ambient = new THREE.AmbientLight(color.getHex());
 scene.add(ambient);
 
 //LINE
-var material = new THREE.LineDashedMaterial( {
-	color: 'blue',
-	linewidth: 5,
-	scale: 5,
-	dashSize: 5,
-	gapSize: 5,
-} );
-var geometry = new THREE.Geometry(1,1,1);
-geometry.vertices.push(new THREE.Vector3( -10, 0, 0) );
-geometry.vertices.push(new THREE.Vector3( 0, 10, 0) );
-geometry.vertices.push(new THREE.Vector3( 10, 0, 0) );
-var line = new THREE.Line( geometry, material );
-scene.add( line );
+var from = new THREE.Vector3(-100,-50,-100);
+var to = new THREE.Vector3(0,0,0);
+var direction = to.clone().sub(from);
+var length = direction.length();
+var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
+arrowHelper.line.material.linewidth = 50;
 
-function render(){
-	renderer.render(scene, camera);
-}
+
+scene.add(arrowHelper);
 
 var frameId = 0;
 function redraw(){
@@ -137,6 +129,10 @@ function redraw(){
 	frameId = requestAnimationFrame(render);
 }
 redraw()
+
+function render(){
+	renderer.render(scene, camera);
+}
 
 /*
 var isDragging = false;
