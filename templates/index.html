@@ -42,28 +42,14 @@
       <div id="playground"></div><br>
       <select onchange="getChoice()" id="options">
         <option value="linecur">Line of Current</option>
-        <option value="doublelinecur">Double Line of Current</option>
-        <option value="dipolelinecur">Dipole Line of Current</option>
-        <option value="uniform">Uniform Field</option>
         <option value="movcharge">Moving Charge</option>
-        <option value="doublemovcharge">Double Moving Charge</option>
-        <option value="dipolemovcharge">Dipole Moving Charge</option>
         <option value="loopcur">Loop of Current</option>
-        <option value="doubleloopcur">Double Loops of Current</option>
-        <option value="opplinecur">Opposing Lines of Current</option>
-        <option value="stackedloopcur">Stacked Loops of Current</option>
-        <option value="stackedopploopcur">Stacked, Opposing Loops of Current</option>
-        <option value="conloop">Concentric Loops</option>
         <option value="solenoid">Solenoid</option>
-        <option value="toroid">Toroid</option>
-        <option value="square">Square Loop</option>
-        <option value="rect">Rectangular Loop</option>
       </select><br><br>
       <button id="reset">Reset</button><br>
     </div>
   </body>
 
-	<script src="matter.js" type="text/javascript"></script>
   <script src="{{ url_for('static', filename='js/three.js') }}"></script>
   <script src="{{ url_for('static', filename='js/physics.js') }}"></script>
 </html>
