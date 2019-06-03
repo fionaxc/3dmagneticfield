@@ -1,41 +1,202 @@
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+var three = THREE;
 
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize( 600, 600 );
-document.getElementById("playground").appendChild( renderer.domElement );
+var scene = new three.Scene();
+var camera = new three.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 
-// var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-// var material = new THREE.MeshBasicMaterial( { color: 0xFFFF00 } );
-// var cube = new THREE.Mesh( geometry, material );
-// scene.add( cube );
+var renderer = new three.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-var material = new THREE.LineDashedMaterial( {
-	color: 0xffffff,
-	linewidth: 1,
-	scale: 1,
-	dashSize: 3,
-	gapSize: 1,
-} );
+document.body.appendChild(renderer.domElement);
 
-var geometry = new THREE.Geometry();
-geometry.vertices.push(new THREE.Vector3( -10, 0, 0) );
-geometry.vertices.push(new THREE.Vector3( 0, 10, 0) );
-geometry.vertices.push(new THREE.Vector3( 10, 0, 0) );
 
-var line = new THREE.Line( geometry, material );
-scene.add( line );
-renderer.render( scene, camera );
 
-// camera.position.x = mouseX;
-// camera.position.y = mouseY;
+var geometry = new three.BoxGeometry(1, 1, 1);
+//var material = new three.MeshNormalMaterial();
+/* * /
+var material = new three.MeshBasicMaterial({
+    color: 0x00ff00
+});
+/* */
+/* */
+three.ImageUtils.crossOrigin = '';
+var texture = three.ImageUtils.loadTexture('http://i.imgur.com/CEGihbB.gif');
+texture.anisotropy = renderer.getMaxAnisotropy();
+
+var material = new three.MeshFaceMaterial([
+    new three.MeshBasicMaterial({
+        color: 0x00ff00
+    }),
+    new three.MeshBasicMaterial({
+        color: 0xff0000
+    }),
+    new three.MeshBasicMaterial({
+        //color: 0x0000ff,
+        map: texture
+    }),
+    new three.MeshBasicMaterial({
+        color: 0xffff00
+    }),
+    new three.MeshBasicMaterial({
+        color: 0x00ffff
+    }),
+    new three.MeshBasicMaterial({
+        color: 0xff00ff
+    })
+]);
+/* */
+
+var cube = new three.Mesh(geometry, material);
+cube.rotation.x = Math.PI/4;
+cube.rotation.y = Math.PI/4;
+scene.add(cube);
+
+
 camera.position.z = 5;
 
-function animate() {
-	requestAnimationFrame( animate );
-	renderer.render( scene, camera );
+/* */
+var isDragging = false;
+var previousMousePosition = {
+    x: 0,
+    y: 0
+};
+$(renderer.domElement).on('mousedown', function(e) {
+    isDragging = true;
+})
+.on('mousemove', function(e) {
+    //console.log(e);
+    var deltaMove = {
+        x: e.offsetX-previousMousePosition.x,
+        y: e.offsetY-previousMousePosition.y
+    };
+
+    if(isDragging) {
+
+        var deltaRotationQuaternion = new three.Quaternion()
+            .setFromEuler(new three.Euler(
+                toRadians(deltaMove.y * 1),
+                toRadians(deltaMove.x * 1),
+                0,
+                'XYZ'
+            ));
+
+        cube.quaternion.multiplyQuaternions(deltaRotationQuaternion, cube.quaternion);
+    }
+
+    previousMousePosition = {
+        x: e.offsetX,
+        y: e.offsetY
+    };
+});
+/* */
+
+$(document).on('mouseup', function(e) {
+    isDragging = false;
+});
+
+
+
+// shim layer with setTimeout fallback
+window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+})();
+
+var lastFrameTime = new Date().getTime() / 1000;
+var totalGameTime = 0;
+function update(dt, t) {
+    //console.log(dt, t);
+
+    //camera.position.z += 1 * dt;
+    //cube.rotation.x += 1 * dt;
+    //cube.rotation.y += 1 * dt;
+
+    setTimeout(function() {
+        var currTime = new Date().getTime() / 1000;
+        var dt = currTime - (lastFrameTime || currTime);
+        totalGameTime += dt;
+
+        update(dt, totalGameTime);
+
+        lastFrameTime = currTime;
+    }, 0);
 }
-animate();
+
+
+function render() {
+    renderer.render(scene, camera);
+
+
+    requestAnimFrame(render);
+}
+
+render();
+update(0, totalGameTime);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function toRadians(angle) {
+	return angle * (Math.PI / 180);
+}
+
+function toDegrees(angle) {
+	return angle * (180 / Math.PI);
+}
+
+
+
+///////
+
+
+/*
+
+    void drawCurrentLine(Graphics g, int x1, int y1, int x2, int y2, int n,
+			 boolean doArrow, int dir) {
+	int i;
+	if (dir == -1) {
+	    int x3 = x1;
+	    int y3 = y1;
+	    x1 = x2; y1 = y2;
+	    x2 = x3; y2 = y3;
+	}
+	int x0 = x1;
+	int y0 = y1;
+	n *= 3;
+	for (i = 1; i <= n; i++) {
+	    int x = (x2-x1)*i/n + x1;
+	    int y = (y2-y1)*i/n + y1;
+	    g.setColor(Color.yellow);
+	    if (i == n && doArrow && reverse == 1)
+		drawCurrentArrow(g, x0, y0, x, y);
+	    else if (i == 1 && doArrow && reverse == -1)
+		drawCurrentArrow(g, x0, y0, x, y);
+	    else {
+		g.setColor(getCurrentColor(i));
+		g.drawLine(x0, y0, x, y);
+	    }
+	    x0 = x; y0 = y;
+	}
+    }
+*/
+
+
+
+
 
 
 // var c = document.getElementById("playground");
