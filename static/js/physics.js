@@ -1,59 +1,144 @@
-var three = THREE;
+//Controls: listens for browser mouse events and translates them into drag, zoomIn and zoomOut.
+var Controls = (function(Controls) {
+    "use strict";
 
-var scene = new three.Scene();
-var camera = new three.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+	// Check for double inclusion
+	if (Controls.addMouseHandler)
+		return Controls;
 
-var renderer = new three.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+	Controls.addMouseHandler = function (domObject, drag, zoomIn, zoomOut) {
+		var startDragX = null,
+		    startDragY = null;
 
-document.body.appendChild(renderer.domElement);
+		function mouseWheelHandler(e) {
+			e = window.event || e;
+			var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 
+			if (delta < 0 && zoomOut) {
+				zoomOut(delta);
+			} else if (zoomIn) {
+				zoomIn(delta);
+			}
 
+			e.preventDefault();
+		}
 
-var geometry = new three.BoxGeometry(1, 1, 1);
-//var material = new three.MeshNormalMaterial();
-/* * /
-var material = new three.MeshBasicMaterial({
-    color: 0x00ff00
-});
-/* */
-/* */
-three.ImageUtils.crossOrigin = '';
-var texture = three.ImageUtils.loadTexture('http://i.imgur.com/CEGihbB.gif');
-texture.anisotropy = renderer.getMaxAnisotropy();
+		function mouseDownHandler(e) {
+			startDragX = e.clientX;
+			startDragY = e.clientY;
 
-var material = new three.MeshFaceMaterial([
-    new three.MeshBasicMaterial({
-        color: 0x00ff00
-    }),
-    new three.MeshBasicMaterial({
-        color: 0xff0000
-    }),
-    new three.MeshBasicMaterial({
-        //color: 0x0000ff,
-        map: texture
-    }),
-    new three.MeshBasicMaterial({
-        color: 0xffff00
-    }),
-    new three.MeshBasicMaterial({
-        color: 0x00ffff
-    }),
-    new three.MeshBasicMaterial({
-        color: 0xff00ff
-    })
-]);
-/* */
+			e.preventDefault();
+		}
 
-var cube = new three.Mesh(geometry, material);
-cube.rotation.x = Math.PI/4;
-cube.rotation.y = Math.PI/4;
-scene.add(cube);
+		function mouseMoveHandler(e) {
+			if (startDragX === null || startDragY === null)
+				return;
 
+			if (drag)
+				drag(e.clientX - startDragX, e.clientY - startDragY);
 
-camera.position.z = 5;
+			startDragX = e.clientX;
+			startDragY = e.clientY;
 
-/* */
+			e.preventDefault();
+		}
+
+		function mouseUpHandler(e) {
+			mouseMoveHandler.call(this, e);
+			startDragX = null;
+			startDragY = null;
+
+			e.preventDefault();
+		}
+
+		domObject.addEventListener("mousewheel", mouseWheelHandler);
+		domObject.addEventListener("DOMMouseScroll", mouseWheelHandler);
+		domObject.addEventListener("mousedown", mouseDownHandler);
+		domObject.addEventListener("mousemove", mouseMoveHandler);
+		domObject.addEventListener("mouseup", mouseUpHandler);
+	};
+	return Controls;
+}(Controls || {}));
+
+//render stuff
+var renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setSize(600, 600);
+document.getElementById("playground").appendChild( renderer.domElement );
+
+var scene = new THREE.Scene();
+var center = new THREE.Vector3();
+var camera = new THREE.PerspectiveCamera(45, 1, 0.01, 300);
+
+camera.up = new THREE.Vector3(0, 0, 1);
+camera.position.x = 5;
+camera.lookAt(center);
+
+function drag(deltaX, deltaY) {
+	var radPerPixel = (Math.PI / 450),
+			deltaPhi = radPerPixel * deltaX,
+			deltaTheta = radPerPixel * deltaY,
+			pos = camera.position.sub(center),
+			radius = pos.length(),
+			theta = Math.acos(pos.z / radius),
+			phi = Math.atan2(pos.y, pos.x);
+
+	// Subtract deltaTheta and deltaPhi
+	theta = Math.min(Math.max(theta - deltaTheta, 0), Math.PI);
+	phi -= deltaPhi;
+
+	// Turn back into Cartesian coordinates
+	pos.x = radius * Math.sin(theta) * Math.cos(phi);
+	pos.y = radius * Math.sin(theta) * Math.sin(phi);
+	pos.z = radius * Math.cos(theta);
+
+	camera.position.add(center);
+	camera.lookAt(center);
+	redraw();
+}
+
+function zoomIn() {
+	camera.position.sub(center).multiplyScalar(0.9).add(center);
+	redraw();
+}
+
+function zoomOut() {
+	camera.position.sub(center).multiplyScalar(1.1).add(center);
+	redraw();
+}
+
+Controls.addMouseHandler(renderer.domElement, drag, zoomIn, zoomOut);
+
+var color = new THREE.Color(0.2, 0.2, 0.2);
+var ambient = new THREE.AmbientLight(color.getHex());
+scene.add(ambient);
+
+//LINE
+var material = new THREE.LineDashedMaterial( {
+	color: 'blue',
+	linewidth: 5,
+	scale: 5,
+	dashSize: 5,
+	gapSize: 5,
+} );
+var geometry = new THREE.Geometry(1,1,1);
+geometry.vertices.push(new THREE.Vector3( -10, 0, 0) );
+geometry.vertices.push(new THREE.Vector3( 0, 10, 0) );
+geometry.vertices.push(new THREE.Vector3( 10, 0, 0) );
+var line = new THREE.Line( geometry, material );
+scene.add( line );
+
+function render(){
+	renderer.render(scene, camera);
+}
+
+var frameId = 0;
+function redraw(){
+	cancelAnimationFrame(frameId);
+	frameId = requestAnimationFrame(render);
+}
+redraw()
+
+/*
 var isDragging = false;
 var previousMousePosition = {
     x: 0,
@@ -79,7 +164,7 @@ $(renderer.domElement).on('mousedown', function(e) {
                 'XYZ'
             ));
 
-        cube.quaternion.multiplyQuaternions(deltaRotationQuaternion, cube.quaternion);
+        line.quaternion.multiplyQuaternions(deltaRotationQuaternion, line.quaternion);
     }
 
     previousMousePosition = {
@@ -87,7 +172,6 @@ $(renderer.domElement).on('mousedown', function(e) {
         y: e.offsetY
     };
 });
-/* */
 
 $(document).on('mouseup', function(e) {
     isDragging = false;
@@ -136,20 +220,6 @@ function render() {
 render();
 update(0, totalGameTime);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function toRadians(angle) {
 	return angle * (Math.PI / 180);
 }
@@ -157,6 +227,15 @@ function toRadians(angle) {
 function toDegrees(angle) {
 	return angle * (180 / Math.PI);
 }
+
+
+
+
+
+*/
+
+
+
 
 
 
