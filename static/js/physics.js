@@ -1,3 +1,4 @@
+
 //Controls: listens for browser mouse events and translates them into drag, zoomIn and zoomOut.
 var Controls = (function(Controls) {
     "use strict";
@@ -108,31 +109,44 @@ function zoomOut() {
 
 Controls.addMouseHandler(renderer.domElement, drag, zoomIn, zoomOut);
 
-var color = new THREE.Color(0.2, 0.2, 0.2);
-var ambient = new THREE.AmbientLight(color.getHex());
-scene.add(ambient);
+var getChoice = function(e) {
 
-//LINE
-var from = new THREE.Vector3(-100,-50,-100);
-var to = new THREE.Vector3(0,0,0);
-var direction = to.clone().sub(from);
-var length = direction.length();
-var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
-arrowHelper.line.material.linewidth = 50;
+   choice = document.getElementById("options").value;
+   if (choice == "linecur") {
+     redraw();
+		 //LINE
+		 var from = new THREE.Vector3(-100,-50,-100);
+		 var to = new THREE.Vector3(0,0,0);
+		 var direction = to.clone().sub(from);
+		 var length = direction.length();
+		 var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
+		 arrowHelper.line.material.linewidth = 50;
+		 scene.add(arrowHelper);
+   }
+   if (choice == "movecharge") {
+		 redraw();
+   }
+	 if (choice == "loopcur") {
+
+	 }
+	 if (choice == "solenoid") {
+
+	 }
+ }
 
 
-scene.add(arrowHelper);
+ var frameId = 0;
 
-var frameId = 0;
-function redraw(){
-	cancelAnimationFrame(frameId);
-	frameId = requestAnimationFrame(render);
-}
-redraw()
+ function redraw(){
+ 	cancelAnimationFrame(frameId);
+ 	frameId = requestAnimationFrame(render);
+ }
+ redraw()
 
-function render(){
-	renderer.render(scene, camera);
-}
+ function render(){
+ 	renderer.render(scene, camera);
+ }
+
 
 /*
 var isDragging = false;
