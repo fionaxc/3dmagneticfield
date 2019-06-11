@@ -1,152 +1,204 @@
-
-//Controls: listens for browser mouse events and translates them into drag, zoomIn and zoomOut.
-var Controls = (function(Controls) {
-    "use strict";
-
-	// Check for double inclusion
-	if (Controls.addMouseHandler)
-		return Controls;
-
-	Controls.addMouseHandler = function (domObject, drag, zoomIn, zoomOut) {
-		var startDragX = null,
-		    startDragY = null;
-
-		function mouseWheelHandler(e) {
-			e = window.event || e;
-			var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-
-			if (delta < 0 && zoomOut) {
-				zoomOut(delta);
-			} else if (zoomIn) {
-				zoomIn(delta);
-			}
-
-			e.preventDefault();
-		}
-
-		function mouseDownHandler(e) {
-			startDragX = e.clientX;
-			startDragY = e.clientY;
-
-			e.preventDefault();
-		}
-
-		function mouseMoveHandler(e) {
-			if (startDragX === null || startDragY === null)
-				return;
-
-			if (drag)
-				drag(e.clientX - startDragX, e.clientY - startDragY);
-
-			startDragX = e.clientX;
-			startDragY = e.clientY;
-
-			e.preventDefault();
-		}
-
-		function mouseUpHandler(e) {
-			mouseMoveHandler.call(this, e);
-			startDragX = null;
-			startDragY = null;
-
-			e.preventDefault();
-		}
-
-		domObject.addEventListener("mousewheel", mouseWheelHandler);
-		domObject.addEventListener("DOMMouseScroll", mouseWheelHandler);
-		domObject.addEventListener("mousedown", mouseDownHandler);
-		domObject.addEventListener("mousemove", mouseMoveHandler);
-		domObject.addEventListener("mouseup", mouseUpHandler);
-	};
-	return Controls;
-}(Controls || {}));
-
-//render stuff
-var renderer = new THREE.WebGLRenderer({antialias: true});
-renderer.setSize(600, 600);
-document.getElementById("playground").appendChild( renderer.domElement );
-
 var scene = new THREE.Scene();
-var center = new THREE.Vector3();
+scene.background = new THREE.Color( 0x000000 );
 var camera = new THREE.PerspectiveCamera(90, 1, 0.1,1000);
+var renderer = new THREE.WebGLRenderer({
+  antialias: true,
+  alpha: true
+});
+renderer.setSize(600, 600);
+renderer.domElement.id = 'canv';
+document.getElementById("playground").appendChild( renderer.domElement );
+// document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
 camera.up = new THREE.Vector3(0, 0, 1);
 camera.position.set(-170,170,40);
+var center = new THREE.Vector3();
 camera.lookAt(center);
 
-function drag(deltaX, deltaY) {
-	var radPerPixel = (Math.PI / 450),
-			deltaPhi = radPerPixel * deltaX,
-			deltaTheta = radPerPixel * deltaY,
-			pos = camera.position.sub(center),
-			radius = pos.length(),
-			theta = Math.acos(pos.z / radius),
-			phi = Math.atan2(pos.y, pos.x);
-
-	// Subtract deltaTheta and deltaPhi
-	theta = Math.min(Math.max(theta - deltaTheta, 0), Math.PI);
-	phi -= deltaPhi;
-
-	// Turn back into Cartesian coordinates
-	pos.x = radius * Math.sin(theta) * Math.cos(phi);
-	pos.y = radius * Math.sin(theta) * Math.sin(phi);
-	pos.z = radius * Math.cos(theta);
-
-	camera.position.add(center);
-	camera.lookAt(center);
-	redraw();
-}
-
-function zoomIn() {
-	camera.position.sub(center).multiplyScalar(0.9).add(center);
-	redraw();
-}
-
-function zoomOut() {
-	camera.position.sub(center).multiplyScalar(1.1).add(center);
-	redraw();
-}
-
-Controls.addMouseHandler(renderer.domElement, drag, zoomIn, zoomOut);
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+var from = new THREE.Vector3(-100,-50,-100);
+var to = new THREE.Vector3(0,0,0);
+var direction = to.clone().sub(from);
+var length = direction.length();
+var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
+arrowHelper.line.material.linewidth = 50;
+scene.add(arrowHelper);
 
 var getChoice = function(e) {
 
-   choice = document.getElementById("options").value;
-   if (choice == "linecur") {
-     redraw();
-		 //LINE
-		 var from = new THREE.Vector3(-100,-50,-100);
-		 var to = new THREE.Vector3(0,0,0);
-		 var direction = to.clone().sub(from);
-		 var length = direction.length();
-		 var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
-		 arrowHelper.line.material.linewidth = 50;
-		 scene.add(arrowHelper);
-   }
-   if (choice == "movecharge") {
-		 redraw();
-   }
-	 if (choice == "loopcur") {
-
-	 }
-	 if (choice == "solenoid") {
-
-	 }
+   // choice = document.getElementById("options").value;
+   // if (choice == "linecur") {
+   //   redraw();
+		//  //LINE
+		//  var from = new THREE.Vector3(-100,-50,-100);
+		//  var to = new THREE.Vector3(0,0,0);
+		//  var direction = to.clone().sub(from);
+		//  var length = direction.length();
+		//  var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
+		//  arrowHelper.line.material.linewidth = 50;
+		//  scene.add(arrowHelper);
+   // }
+   // if (choice == "movecharge") {
+		//  redraw();
+   // }
+	 // if (choice == "loopcur") {
+   //
+	 // }
+	 // if (choice == "solenoid") {
+   //
+	 // }
  }
 
+var frameId = 0;
 
- var frameId = 0;
+function redraw(){
+ cancelAnimationFrame(frameId);
+ frameId = requestAnimationFrame(render);
+}
+redraw()
 
- function redraw(){
- 	cancelAnimationFrame(frameId);
- 	frameId = requestAnimationFrame(render);
- }
- redraw()
+render();
+function render(){
+  requestAnimationFrame(render);
+  //scene.rotation.y += clock.getDelta() * 0.1;
+  renderer.render(scene, camera);
+}
 
- function render(){
- 	renderer.render(scene, camera);
- }
 
+// //Controls: listens for browser mouse events and translates them into drag, zoomIn and zoomOut.
+// var Controls = (function(Controls) {
+//     "use strict";
+//
+// 	// Check for double inclusion
+// 	if (Controls.addMouseHandler)
+// 		return Controls;
+//
+// 	Controls.addMouseHandler = function (domObject, drag, zoomIn, zoomOut) {
+// 		var startDragX = null,
+// 		    startDragY = null;
+//
+// 		function mouseWheelHandler(e) {
+// 			e = window.event || e;
+// 			var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+//
+// 			if (delta < 0 && zoomOut) {
+// 				zoomOut(delta);
+// 			} else if (zoomIn) {
+// 				zoomIn(delta);
+// 			}
+//
+// 			e.preventDefault();
+// 		}
+//
+// 		function mouseDownHandler(e) {
+// 			startDragX = e.clientX;
+// 			startDragY = e.clientY;
+//
+// 			e.preventDefault();
+// 		}
+//
+// 		function mouseMoveHandler(e) {
+// 			if (startDragX === null || startDragY === null)
+// 				return;
+//
+// 			if (drag)
+// 				drag(e.clientX - startDragX, e.clientY - startDragY);
+//
+// 			startDragX = e.clientX;
+// 			startDragY = e.clientY;
+//
+// 			e.preventDefault();
+// 		}
+//
+// 		function mouseUpHandler(e) {
+// 			mouseMoveHandler.call(this, e);
+// 			startDragX = null;
+// 			startDragY = null;
+//
+// 			e.preventDefault();
+// 		}
+//
+// 		domObject.addEventListener("mousewheel", mouseWheelHandler);
+// 		domObject.addEventListener("DOMMouseScroll", mouseWheelHandler);
+// 		domObject.addEventListener("mousedown", mouseDownHandler);
+// 		domObject.addEventListener("mousemove", mouseMoveHandler);
+// 		domObject.addEventListener("mouseup", mouseUpHandler);
+// 	};
+// 	return Controls;
+// }(Controls || {}));
+//
+// //render stuff
+// var renderer = new THREE.WebGLRenderer({antialias: true});
+// renderer.setSize(600, 600);
+// document.getElementById("playground").appendChild( renderer.domElement );
+//
+// var scene = new THREE.Scene();
+// var center = new THREE.Vector3();
+// var camera = new THREE.PerspectiveCamera(90, 1, 0.1,1000);
+//
+// camera.up = new THREE.Vector3(0, 0, 1);
+// camera.position.set(-170,170,40);
+// camera.lookAt(center);
+//
+// function drag(deltaX, deltaY) {
+// 	var radPerPixel = (Math.PI / 450),
+// 			deltaPhi = radPerPixel * deltaX,
+// 			deltaTheta = radPerPixel * deltaY,
+// 			pos = camera.position.sub(center),
+// 			radius = pos.length(),
+// 			theta = Math.acos(pos.z / radius),
+// 			phi = Math.atan2(pos.y, pos.x);
+//
+// 	// Subtract deltaTheta and deltaPhi
+// 	theta = Math.min(Math.max(theta - deltaTheta, 0), Math.PI);
+// 	phi -= deltaPhi;
+//
+// 	// Turn back into Cartesian coordinates
+// 	pos.x = radius * Math.sin(theta) * Math.cos(phi);
+// 	pos.y = radius * Math.sin(theta) * Math.sin(phi);
+// 	pos.z = radius * Math.cos(theta);
+//
+// 	camera.position.add(center);
+// 	camera.lookAt(center);
+// 	redraw();
+// }
+//
+// function zoomIn() {
+// 	camera.position.sub(center).multiplyScalar(0.9).add(center);
+// 	redraw();
+// }
+//
+// function zoomOut() {
+// 	camera.position.sub(center).multiplyScalar(1.1).add(center);
+// 	redraw();
+// }
+//
+// Controls.addMouseHandler(renderer.domElement, drag, zoomIn, zoomOut);
+//
+// var getChoice = function(e) {
+//
+//    choice = document.getElementById("options").value;
+//    if (choice == "linecur") {
+//      redraw();
+// 		 //LINE
+// 		 var from = new THREE.Vector3(-100,-50,-100);
+// 		 var to = new THREE.Vector3(0,0,0);
+// 		 var direction = to.clone().sub(from);
+// 		 var length = direction.length();
+// 		 var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
+// 		 arrowHelper.line.material.linewidth = 50;
+// 		 scene.add(arrowHelper);
+//    }
+//    if (choice == "movecharge") {
+// 		 redraw();
+//    }
+// 	 if (choice == "loopcur") {
+//
+// 	 }
+// 	 if (choice == "solenoid") {
+//
+// 	 }
+//  }
 
 /*
 var isDragging = false;
