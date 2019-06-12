@@ -8,6 +8,7 @@ var renderer = new THREE.WebGLRenderer({
 renderer.setSize(600, 600);
 renderer.domElement.id = 'canv';
 document.getElementById("playground").appendChild( renderer.domElement );
+var reset = document.getElementById("reset");
 // document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
 camera.up = new THREE.Vector3(0, 0, 1);
@@ -15,47 +16,56 @@ camera.position.set(-170,170,40);
 var center = new THREE.Vector3();
 camera.lookAt(center);
 
-var controls = new THREE.OrbitControls(camera, renderer.domElement);
-var from = new THREE.Vector3(-100,-50,-100);
-var to = new THREE.Vector3(0,0,0);
-var direction = to.clone().sub(from);
-var length = direction.length();
-var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
-arrowHelper.line.material.linewidth = 50;
-scene.add(arrowHelper);
-
-var getChoice = function(e) {
-
-   // choice = document.getElementById("options").value;
-   // if (choice == "linecur") {
-   //   redraw();
-		//  //LINE
-		//  var from = new THREE.Vector3(-100,-50,-100);
-		//  var to = new THREE.Vector3(0,0,0);
-		//  var direction = to.clone().sub(from);
-		//  var length = direction.length();
-		//  var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
-		//  arrowHelper.line.material.linewidth = 50;
-		//  scene.add(arrowHelper);
-   // }
-   // if (choice == "movecharge") {
-		//  redraw();
-   // }
-	 // if (choice == "loopcur") {
-   //
-	 // }
-	 // if (choice == "solenoid") {
-   //
-	 // }
- }
-
-var frameId = 0;
+function setup(){
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+  var from = new THREE.Vector3(-100,-50,-100);
+  var to = new THREE.Vector3(0,0,0);
+  var direction = to.clone().sub(from);
+  var length = direction.length();
+  var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
+  arrowHelper.line.material.linewidth = 50;
+  scene.add(arrowHelper);
+}
+setup();
 
 function redraw(){
  cancelAnimationFrame(frameId);
  frameId = requestAnimationFrame(render);
 }
-redraw()
+redraw();
+
+function clearThree(scene){
+  while(scene.children.length > 0){
+    clearThree(scene.children[0])
+    scene.remove(scene.children[0]);
+  }
+  if(scene.geometry) scene.geometry.dispose()
+  if(scene.material) scene.material.dispose()
+  if(scene.texture) scene.texture.dispose()
+}
+
+var getChoice = function(e) {
+   choice = document.getElementById("options").value;
+   clearThree(scene);
+   if (choice == "linecur") {
+     redraw();
+		 //LINE
+		 setup();
+   }
+   if (choice == "movecharge") {
+   }
+	 if (choice == "loopcur") {
+	 }
+	 if (choice == "solenoid") {
+	 }
+ }
+
+ reset.addEventListener('click', function(e){
+   clearThree(scene);
+ }
+ )
+
+var frameId = 0;
 
 render();
 function render(){
