@@ -1,5 +1,5 @@
 var scene = new THREE.Scene();
-scene.background = new THREE.Color( 0x000000 );
+scene.background = new THREE.Color( 0xffffff );
 var camera = new THREE.PerspectiveCamera(90, 1, 0.1,1000);
 var renderer = new THREE.WebGLRenderer({
   antialias: true,
@@ -13,18 +13,57 @@ var reset = document.getElementById("reset");
 
 camera.up = new THREE.Vector3(0, 0, 1);
 camera.position.set(-170,170,40);
+camera.zoom = 30;
+camera.updateProjectionMatrix();
 var center = new THREE.Vector3();
 camera.lookAt(center);
 
+var arrows;
+var d;
+var ori;
+var arrow;
+var counter;
+var num = 8;
+var step = 1;
+var direction;
+
 function setup(){
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
-  var from = new THREE.Vector3(-100,-50,-100);
-  var to = new THREE.Vector3(0,0,0);
-  var direction = to.clone().sub(from);
+  // var from = new THREE.Vector3(-100,-50,-100);
+  // var to = new THREE.Vector3(0,0,0);
+  from = new THREE.Vector3(0, 0, 0).normalize();
+  to = new THREE.Vector3(0, 0, 0);
+  direction = to.clone().sub(from);
   var length = direction.length();
-  var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, length, 'green');
+  var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, 5, 0x00ff00, 0.10, 0.2, 0.02);
   arrowHelper.line.material.linewidth = 50;
   scene.add(arrowHelper);
+
+  arrows = [];
+  d=null;
+  ori=null;
+  arrow=null;
+  counter = 0;
+
+  // arrows
+  for (let x = 0; x < num + 1; x+=step) {
+    for (let y = 0; y < num + 1; y+=step) {
+      for (let z = 0; z < num + 1; z+=step) {
+        // var d = new THREE.Vector3(THREE.Math.randFloatSpread(2), THREE.Math.randFloatSpread(2), THREE.Math.randFloatSpread(2)).normalize();
+        from = new THREE.Vector3(0, 0, 0).normalize();
+        to = new THREE.Vector3(x - num/2, y - num/2, z - num/2);
+        // direction = to.clone().sub(from);
+        arrow = new THREE.ArrowHelper(from, to, 1,  0x6d2aff, 0.10, 0.2, 0.02);
+        // arrow = new THREE.ArrowHelper(from, to, 1,  0xffffff, 0.10, 0.2, 0.02);
+        arrows.push(arrow);
+        scene.add(arrow);
+        counter+=1;
+        if (counter > Math.floor(Math.pow(((num+1) / step), 3))) {
+          break;
+        };
+      };
+    };
+  };
 }
 setup();
 
