@@ -46,25 +46,29 @@ function setup(){
   counter = 0;
 
   // arrows
-  for (let x = 0; x < num + 1; x+=step) {
-    for (let y = 0; y < num + 1; y+=step) {
-      for (let z = 0; z < num + 1; z+=step) {
+  for (let z = 0; z < num + 1; z+=step) {
+    for (let x = 0; x < num + 1; x+=step) {
+      // for (let x = Math.pow(100-Math.pow(x, 2)-Math.pow(y, 2), 0.5); z < num + 1; z+=step) {
+      for (let y = 0; y < num + 1; y+=step) {
         // var d = new THREE.Vector3(THREE.Math.randFloatSpread(2), THREE.Math.randFloatSpread(2), THREE.Math.randFloatSpread(2)).normalize();
-        from = new THREE.Vector3(0, 0, 0).normalize();
-        to = new THREE.Vector3(x - num/2, y - num/2, z - num/2);
-        // direction = to.clone().sub(from);
-        arrow = new THREE.ArrowHelper(from, to, 1,  0x6d2aff, 0.10, 0.2, 0.02);
-        // arrow = new THREE.ArrowHelper(from, to, 1,  0xffffff, 0.10, 0.2, 0.02);
-        arrows.push(arrow);
-        scene.add(arrow);
-        counter+=1;
-        if (counter > Math.floor(Math.pow(((num+1) / step), 3))) {
-          break;
+         // Math.pow(100-Math.pow(x, 2)-Math.pow(y, 2), 0.5);
+         if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
+          from = new THREE.Vector3(x, y, z).normalize();
+          to = new THREE.Vector3(x + 2, y +2, z).normalize();
+          // direction = to.clone().sub(from);
+          arrow = new THREE.ArrowHelper(from, to, 1,  0x6d2aff, 0.10, 0.2, 0.02);
+          // arrow = new THREE.ArrowHelper(from, to, 1,  0xffffff, 0.10, 0.2, 0.02);
+          arrows.push(arrow);
+          scene.add(arrow);
+          counter+=1;
+          if (counter > Math.floor(Math.pow(((num+1) / step), 3))) {
+            break;
+          };
         };
       };
     };
   };
-}
+};
 setup();
 
 function redraw(){
