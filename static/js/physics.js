@@ -31,13 +31,13 @@ function setup(){
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
   // var from = new THREE.Vector3(-100,-50,-100);
   // var to = new THREE.Vector3(0,0,0);
-  from = new THREE.Vector3(0, 0, 0).normalize();
-  to = new THREE.Vector3(0, 0, 0);
-  direction = to.clone().sub(from);
-  var length = direction.length();
-  var arrowHelper = new THREE.ArrowHelper(direction.normalize(), from, 5, 0x00ff00, 0.10, 0.2, 0.02);
-  arrowHelper.line.material.linewidth = 50;
-  scene.add(arrowHelper);
+  var sourcePos = new THREE.Vector3(0, 20, 0);
+  var targetPos = new THREE.Vector3(0, -20, 0);
+  var direction = new THREE.Vector3().sub(targetPos, sourcePos);
+  var currentArrow = new THREE.ArrowHelper(direction.clone().normalize(), sourcePos, direction.length(), 0x00ff00, 0.2, 0.02);
+  currentArrow.line.material.linewidth = 5000;
+  scene.add(currentArrow);
+
 
   arrows = [];
   d=null;
