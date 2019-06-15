@@ -23,19 +23,19 @@ var d;
 var ori;
 var arrow;
 var counter;
-var num = 8;
+var num = 10;
 var step = 1;
 var direction;
 
 function setup(){
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
-  // var from = new THREE.Vector3(-100,-50,-100);
+  // var from = new THREE.Vector3(-100,-50,-100);ow
   // var to = new THREE.Vector3(0,0,0);
-  var sourcePos = new THREE.Vector3(0, 20, 0);
-  var targetPos = new THREE.Vector3(0, -20, 0);
+  var sourcePos = new THREE.Vector3(0, 0, 10);
+  var targetPos = new THREE.Vector3(0, 0, -10);
   var direction = new THREE.Vector3().sub(targetPos, sourcePos);
   var currentArrow = new THREE.ArrowHelper(direction.clone().normalize(), sourcePos, direction.length(), 0x00ff00, 0.2, 0.02);
-  currentArrow.line.material.linewidth = 5000;
+  currentArrow.line.material.linewidth = 50;
   scene.add(currentArrow);
 
 
@@ -46,18 +46,14 @@ function setup(){
   counter = 0;
 
   // arrows
-  for (let z = 0; z < num + 1; z+=step) {
-    for (let x = 0; x < num + 1; x+=step) {
-      // for (let x = Math.pow(100-Math.pow(x, 2)-Math.pow(y, 2), 0.5); z < num + 1; z+=step) {
-      for (let y = 0; y < num + 1; y+=step) {
-        // var d = new THREE.Vector3(THREE.Math.randFloatSpread(2), THREE.Math.randFloatSpread(2), THREE.Math.randFloatSpread(2)).normalize();
-         // Math.pow(100-Math.pow(x, 2)-Math.pow(y, 2), 0.5);
+  for (let z = -10; z < 11; z+=step) {
+    for (let x = -num; x < num + 1; x+=step) {
+      for (let y = -num; y < num + 1; y+=step) {
          if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
-          from = new THREE.Vector3(x, y, z).normalize();
-          to = new THREE.Vector3(x + 2, y +2, z).normalize();
-          // direction = to.clone().sub(from);
-          arrow = new THREE.ArrowHelper(from, to, 1,  0x6d2aff, 0.10, 0.2, 0.02);
-          // arrow = new THREE.ArrowHelper(from, to, 1,  0xffffff, 0.10, 0.2, 0.02);
+          from = new THREE.Vector3(x, y, z)
+          to = new THREE.Vector3(x + 1, y + 1, z)
+          direction = new THREE.Vector3().sub(to, from)
+          arrow = new THREE.ArrowHelper(direction.clone(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
           arrows.push(arrow);
           scene.add(arrow);
           counter+=1;
