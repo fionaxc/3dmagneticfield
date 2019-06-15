@@ -11,12 +11,13 @@ document.getElementById("playground").appendChild( renderer.domElement );
 var reset = document.getElementById("reset");
 // document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
-camera.up = new THREE.Vector3(0, 0, 1);
-camera.position.set(-170,170,40);
-camera.zoom = 30;
+camera.up = new THREE.Vector3(0, 1, 0);
+camera.position.set(100,100,100);
+camera.zoom = 10;
 camera.updateProjectionMatrix();
 var center = new THREE.Vector3();
 camera.lookAt(center);
+
 
 var arrows;
 var d;
@@ -27,14 +28,16 @@ var num = 10;
 var step = 1;
 var direction;
 
-function setup(){
+function setup1(){
+  var axesHelper = new THREE.AxesHelper( 3 );
+  scene.add( axesHelper );
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
   // var from = new THREE.Vector3(-100,-50,-100);ow
   // var to = new THREE.Vector3(0,0,0);
   var sourcePos = new THREE.Vector3(0, 0, 10);
   var targetPos = new THREE.Vector3(0, 0, -10);
   var direction = new THREE.Vector3().sub(targetPos, sourcePos);
-  var currentArrow = new THREE.ArrowHelper(direction.clone().normalize(), sourcePos, direction.length(), 0x00ff00, 0.2, 0.02);
+  var currentArrow = new THREE.ArrowHelper(direction.clone().normalize(), sourcePos, direction.length(), 0x00ff00, 0.2, 1);
   currentArrow.line.material.linewidth = 50;
   scene.add(currentArrow);
 
@@ -52,8 +55,12 @@ function setup(){
          if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
           from = new THREE.Vector3(x, y, z)
           to = new THREE.Vector3(x + 1, y + 1, z)
-          direction = new THREE.Vector3().sub(to, from)
-          arrow = new THREE.ArrowHelper(direction.clone(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+          var currentPos = new THREE.Vector3(0,0,z);
+          direction = new THREE.Vector3().sub(to, currentPos);
+          //rotate 90 degrees to get normal Vector
+          var axis = new THREE.Vector3(0,0,1);
+          direction.applyAxisAngle(axis, -90);
+          arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
           arrows.push(arrow);
           scene.add(arrow);
           counter+=1;
@@ -64,14 +71,62 @@ function setup(){
       };
     };
   };
-};
-setup();
+}
+
+function setup2(){
+  var axesHelper = new THREE.AxesHelper( 3 );
+  scene.add( axesHelper );
+  var geometry = new THREE.SphereGeometry( 1, 8, 8 );
+  var material = new THREE.MeshBasicMaterial( {color: 0xFFA500} );
+  var sphere = new THREE.Mesh( geometry, material );
+  scene.add( sphere );
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  var dir = new THREE.Vector3( 0, 0, -20 );
+  //normalize the direction vector (convert to vector of length 1)
+  dir.normalize();
+  var origin = new THREE.Vector3( 0, 0, 0 );
+  var arrowHelper = new THREE.ArrowHelper( dir, origin, 10, 0x6d2aff );
+  scene.add( arrowHelper );
+
+  arrows = [];
+  d=null;
+  ori=null;
+  arrow=null;
+  counter = 0;
+
+  // arrows
+  for (let z = -10; z < 11; z+=step) {
+    for (let x = -num; x < num + 1; x+=step) {
+      for (let y = -num; y < num + 1; y+=step) {
+         if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
+          from = new THREE.Vector3(x, y, z)
+          to = new THREE.Vector3(x + 1, y + 1, z)
+          var currentPos = new THREE.Vector3(0,0,z);
+          direction = new THREE.Vector3().sub(to, currentPos);
+          //rotate 90 degrees to get normal Vector
+          var axis = new THREE.Vector3(0,0,1);
+          direction.applyAxisAngle(axis, -90);
+          arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+          arrows.push(arrow);
+          scene.add(arrow);
+          counter+=1;
+          if (counter > Math.floor(Math.pow(((num+1) / step), 3))) {
+            break;
+          };
+        };
+      };
+    };
+  };
+
+}
+
 
 function redraw(){
  cancelAnimationFrame(frameId);
  frameId = requestAnimationFrame(render);
 }
-redraw();
+
 
 function clearThree(scene){
   while(scene.children.length > 0){
@@ -89,13 +144,19 @@ var getChoice = function(e) {
    if (choice == "linecur") {
      redraw();
 		 //LINE
-		 setup();
+		 setup1();
    }
    if (choice == "movecharge") {
+     redraw();
+     setup2();
    }
 	 if (choice == "loopcur") {
+     redraw();
+     setup3();
 	 }
 	 if (choice == "solenoid") {
+     redraw();
+     setup4();
 	 }
  }
 
