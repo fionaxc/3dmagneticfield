@@ -18,13 +18,27 @@ camera.updateProjectionMatrix();
 var center = new THREE.Vector3();
 camera.lookAt(center);
 
+var angle;
 var arrows;
+var current;
 var d;
 var ori;
-var arrow;
+var arrow ;
 var num = 10;
 var step = 1;
 var direction;
+
+currentrange.addEventListener("click", function(e){
+  updateAngle();
+})
+
+function updateAngle(){
+  var current = document.getElementById("currentrange").value;
+  angle = (current < 0 ? 90 : -90);
+  clearThree(scene);
+  setup1();
+}
+
 
 function setup1(){
 
@@ -37,7 +51,6 @@ function setup1(){
   }
 
   current = output.innerHTML;
-  console.log(current);
 
   var axesHelper = new THREE.AxesHelper( 3 );
   scene.add( axesHelper );
@@ -71,7 +84,7 @@ function setup1(){
               direction = new THREE.Vector3().sub(to, currentPos);
               //rotate 90 degrees to get normal Vector
               var axis = new THREE.Vector3(0,0,1);
-              direction.applyAxisAngle(axis, -90);
+              direction.applyAxisAngle(axis, angle);
               arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
               arrows.push(arrow);
               scene.add(arrow);
@@ -244,8 +257,8 @@ var getChoice = function(e) {
    clearThree(scene);
    if (choice == "linecur") {
      redraw();
-		 setup1();
-
+     updateAngle();
+     setup1();
    }
    if (choice == "movecharge") {
      redraw();
