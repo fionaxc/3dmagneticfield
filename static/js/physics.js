@@ -478,22 +478,20 @@ function setup4() {
 
   //straight diamond
 
-  for (let y = -radius; y < radius+1; y+=step) {
-    for (let z = -2; z < 3; z+=step+0.5) {
-      cur = 0;
-      for (let x = -radius; x < radius+1; x+=step) {
-        if (cur < radius-Math.abs(y)+1) {
-          draw_arrow(x+radius, y, z);
-          draw_arrow(-x-radius, y, z);
+  yval = rbnSteps*rbnStepLength;
+
+  for (let y = -yval/2; y < yval/2; y+=step+0.5) {
+    for (let z = -2; z < 3; z+=step) {
+      for (let x = -radius/2; x < radius/2+1; x+=step) {
+        draw_arrow(x, y, z);
+        draw_arrow(-x, y, z);
       }
-      cur +=1
-    }
     }
   }
 
   function draw_arrow(x, y, z) {
     from = new THREE.Vector3(x, y, z)
-    to = new THREE.Vector3(x, y, z+1)
+    to = new THREE.Vector3(x, y, z)
     currentPos = new THREE.Vector3(x,y,z);
     direction = new THREE.Vector3().subVectors(to, currentPos);
     //rotate 90 degrees to get normal Vector
