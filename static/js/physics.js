@@ -226,6 +226,81 @@ function setup3(){
     scene.add(arrow);
   }
 
+  for (let xrad = 5; xrad < 6; xrad+=step) {
+    draw_ellipse_arrows('x', xrad);
+    draw_ellipse_arrows('x', -xrad);
+    draw_ellipse_arrows('z', xrad);
+    draw_ellipse_arrows('z', -xrad);
+  }
+
+  function draw_ellipse_arrows(axis, val){
+    var ax=0;
+    var az=0;
+    var xrad=0;
+    var zrad=0;
+    if (axis=='x') {
+      xrad=val;
+      ax=-xrad;
+      xrad=(xrad < 0 ? -xrad : xrad);
+      zrad=2*xrad;
+      for (let x = -num; x < num+1; x+=1) {
+        for (let z = -num; z < num+1; z+=1) {
+          if (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(z, 2)/Math.pow(zrad, 2) == 1) {
+             from = new THREE.Vector3(x+ax, 0, z+az);
+             to = new THREE.Vector3(x+ax, 0, z+az);
+             var currentPos = new THREE.Vector3(x+ax,0,z+az);
+             direction = new THREE.Vector3().subVectors(to, currentPos);
+             //rotate 90 degrees to get normal Vector
+             var axis = new THREE.Vector3(0,0,1);
+             direction.applyAxisAngle(axis, -90);
+             arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+             arrows.push(arrow);
+             scene.add(arrow);
+         };
+       };
+     };
+    }
+    else{
+      zrad=val;
+      az=-zrad;
+      zrad=(zrad < 0 ? -zrad : zrad);
+      zrad=2*zrad;
+      for (let z = -num; z < num+1; z+=1) {
+        for (let x = -num; x < num+1; x+=1) {
+          if (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(z, 2)/Math.pow(zrad, 2) == 1) {
+             from = new THREE.Vector3(x+ax, 0, z+az);
+             to = new THREE.Vector3(x+ax, 0, z+az);
+             var currentPos = new THREE.Vector3(x+ax,0,z+az);
+             direction = new THREE.Vector3().subVectors(to, currentPos);
+             //rotate 90 degrees to get normal Vector
+             var axis = new THREE.Vector3(0,0,1);
+             direction.applyAxisAngle(axis, -90);
+             arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+             arrows.push(arrow);
+             scene.add(arrow);
+         };
+       };
+     };
+ }
+ };
+
+  // for (let x = -num; x < num+1; x+=1) {
+  //   for (let z = -num; z < num+1; z+=1) {
+  //      if (Math.pow(x, 2)/Math.pow(5, 2) + Math.pow(z, 2)/100 == 1) {
+  //         from = new THREE.Vector3(x-5, 0, z)
+  //         to = new THREE.Vector3(x-5, 0, z)
+  //         var currentPos = new THREE.Vector3(x-5,0,z);
+  //         direction = new THREE.Vector3().subVectors(to, currentPos);
+  //         //rotate 90 degrees to get normal Vector
+  //         var axis = new THREE.Vector3(0,0,1);
+  //         direction.applyAxisAngle(axis, -90);
+  //         arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+  //         arrows.push(arrow);
+  //         scene.add(arrow);
+  //     };
+  //   };
+  // };
+
   for (let i = radius/2; i < radius/2+5; i+=step) {
     draw_ellipse('x',i);
     draw_ellipse('x',-i);
@@ -273,12 +348,12 @@ function setup3(){
     }
   }
 
-  // var dir = new THREE.Vector3( 0, 0, -20 );
-  // //normalize the direction vector (convert to vector of length 1)
-  // dir.normalize();
-  // var origin = new THREE.Vector3( 0, 0, 0 );
-  // var arrowHelper = new THREE.ArrowHelper( dir, origin, 10, 0x6d2aff );
-  // scene.add( arrowHelper );
+  var dir = new THREE.Vector3( 0, 0, -20 );
+  //normalize the direction vector (convert to vector of length 1)
+  dir.normalize();
+  var origin = new THREE.Vector3( 0, 0, 0 );
+  var arrowHelper = new THREE.ArrowHelper( dir, origin, 10, 0x6d2aff );
+  scene.add( arrowHelper );
 
 
 }
