@@ -46,6 +46,52 @@ function setup1(){
   d=null;
   ori=null;
   arrow=null;
+
+  // arrows
+  // for (let num=10; num<16; num+=1) {
+    for (let z = -10; z < 10; z+=2) {
+      for (let x = -num; x < num + 1; x+=step) {
+        for (let y = -num; y < num + 1; y+=step) {
+           if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
+            for (let i = -10; i < 10; i+=2) {
+              from = new THREE.Vector3(x, y+i, z)
+              // to = new THREE.Vector3(x+1, y+1+i, z)
+              to = new THREE.Vector3(x, y+i, z)
+              var currentPos = new THREE.Vector3(0,0,z);
+              direction = new THREE.Vector3().sub(to, currentPos);
+              //rotate 90 degrees to get normal Vector
+              var axis = new THREE.Vector3(0,0,1);
+              direction.applyAxisAngle(axis, -90);
+              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
+              arrows.push(arrow);
+              scene.add(arrow);
+          };
+        };
+      };
+    };
+  };
+}
+
+function setup2(){
+  var axesHelper = new THREE.AxesHelper( 3 );
+  scene.add( axesHelper );
+  var geometry = new THREE.SphereGeometry( 1, 8, 8 );
+  var material = new THREE.MeshBasicMaterial( {color: 0xFFA500} );
+  var sphere = new THREE.Mesh( geometry, material );
+  scene.add( sphere );
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  var dir = new THREE.Vector3( 0, 0, -20 );
+  //normalize the direction vector (convert to vector of length 1)
+  dir.normalize();
+  var origin = new THREE.Vector3( 0, 0, 0 );
+  var arrowHelper = new THREE.ArrowHelper( dir, origin, 10, 0x6d2aff );
+  scene.add( arrowHelper );
+
+  arrows = [];
+  d=null;
+  ori=null;
+  arrow=null;
   counter = 0;
 
   // arrows
@@ -71,15 +117,24 @@ function setup1(){
       };
     };
   };
+
 }
 
-function setup2(){
+function setup3(){
   var axesHelper = new THREE.AxesHelper( 3 );
   scene.add( axesHelper );
-  var geometry = new THREE.SphereGeometry( 1, 8, 8 );
-  var material = new THREE.MeshBasicMaterial( {color: 0xFFA500} );
-  var sphere = new THREE.Mesh( geometry, material );
-  scene.add( sphere );
+  // var geometry = new THREE.SphereGeometry( 1, 8, 8 );
+  // var material = new THREE.MeshBasicMaterial( {color: 0xFFA500} );
+  // var sphere = new THREE.Mesh( geometry, material );
+  // scene.add( sphere );
+  const disc = new THREE.CircleGeometry(6, 6);
+  const lineMaterial = new THREE.LineBasicMaterial({
+     // transparent: true,
+     color: 0x000000,
+     linewidth: 1.5
+   });
+   const e = new THREE.LineLoop(disc, lineMaterial);
+   scene.add(e);
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
   var dir = new THREE.Vector3( 0, 0, -20 );
