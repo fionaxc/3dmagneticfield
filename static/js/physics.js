@@ -121,16 +121,15 @@ function setup3(){
   // var material = new THREE.MeshBasicMaterial( {color: 0xFFA500} );
   // var sphere = new THREE.Mesh( geometry, material );
   // scene.add( sphere );
-  const disc = new THREE.CircleGeometry(6, 30);
-  const lineMaterial = new THREE.LineDashedMaterial( {
-    	color: 0x000000,
-    	linewidth: 1,
-    	scale: 1,
-    	dashSize: 3,
-    	gapSize: 1,
-    } ) ;
-  const e = new THREE.LineLoop(disc, lineMaterial);
-  scene.add(e);
+  const disc = new THREE.EdgesGeometry(new THREE.CircleGeometry(6, 30));
+  const lineMaterial = new THREE.LineBasicMaterial({
+       transparent: true,
+       color: 0x000000,
+       linewidth: 1.5
+  });
+  const circ = new THREE.LineSegments(disc, lineMaterial);
+  circ.rotation.z = THREE.Math.degToRad(90);
+  scene.add(circ);
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
   // var dir = new THREE.Vector3( 0, 0, -20 );
