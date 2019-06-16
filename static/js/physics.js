@@ -1,5 +1,5 @@
 var scene = new THREE.Scene();
-scene.background = new THREE.Color( 0xffffff );
+scene.background = new THREE.Color( 0x000000 );
 var camera = new THREE.PerspectiveCamera(90, 1, 0.1,1000);
 var renderer = new THREE.WebGLRenderer({
   antialias: true,
@@ -28,6 +28,13 @@ var step = 1;
 var direction;
 
 function setup1(){
+  var slider = document.getElementById("myRange");
+  var output = document.getElementById("demo");
+  output.innerHTML = slider.value;
+
+  slider.oninput = function() {
+    output.innerHTML = this.value;
+  }
   var axesHelper = new THREE.AxesHelper( 3 );
   scene.add( axesHelper );
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -36,7 +43,7 @@ function setup1(){
   var sourcePos = new THREE.Vector3(0, 0, 10);
   var targetPos = new THREE.Vector3(0, 0, -10);
   var direction = new THREE.Vector3().sub(targetPos, sourcePos);
-  var currentArrow = new THREE.ArrowHelper(direction.clone().normalize(), sourcePos, direction.length(), 0x00ff00, 0.2, 1);
+  var currentArrow = new THREE.ArrowHelper(direction.clone().normalize(), sourcePos, direction.length(), 0x00ff00, 0.2, 0.5);
   currentArrow.line.material.linewidth = 50;
   scene.add(currentArrow);
 
@@ -48,20 +55,20 @@ function setup1(){
 
   // arrows
   // for (let num=10; num<16; num+=1) {
-    for (let z = -10; z < 10; z+=2) {
+    for (let z = -10; z < 10; z+=step) {
       for (let x = -num; x < num + 1; x+=step) {
         for (let y = -num; y < num + 1; y+=step) {
            if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
             for (let i = -10; i < 10; i+=2) {
-              from = new THREE.Vector3(x, y+i, z)
+              from = new THREE.Vector3(x+i, y+i, z)
               // to = new THREE.Vector3(x+1, y+1+i, z)
-              to = new THREE.Vector3(x, y+i, z)
+              to = new THREE.Vector3(x+i, y+i, z)
               var currentPos = new THREE.Vector3(0,0,z);
               direction = new THREE.Vector3().sub(to, currentPos);
               //rotate 90 degrees to get normal Vector
               var axis = new THREE.Vector3(0,0,1);
               direction.applyAxisAngle(axis, -90);
-              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
+              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
               arrows.push(arrow);
               scene.add(arrow);
           };
@@ -80,11 +87,11 @@ function setup2(){
   scene.add( sphere );
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-  var dir = new THREE.Vector3( 0, 0, -20 );
+  var dir = new THREE.Vector3( 0, 0, -10 );
   //normalize the direction vector (convert to vector of length 1)
   dir.normalize();
   var origin = new THREE.Vector3( 0, 0, 0 );
-  var arrowHelper = new THREE.ArrowHelper( dir, origin, 10, 0x6d2aff );
+  var arrowHelper = new THREE.ArrowHelper( dir, origin, 10, 0x00ff00, 0.2, 0.5 );
   scene.add( arrowHelper );
 
   arrows = [];
@@ -93,20 +100,22 @@ function setup2(){
   arrow=null;
 
   // arrows
-  for (let z = -10; z < 11; z+=step) {
+  for (let z = -10; z < 10; z+=step) {
     for (let x = -num; x < num + 1; x+=step) {
       for (let y = -num; y < num + 1; y+=step) {
          if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
-          from = new THREE.Vector3(x, y, z)
-          to = new THREE.Vector3(x + 1, y + 1, z)
-          var currentPos = new THREE.Vector3(0,0,z);
-          direction = new THREE.Vector3().sub(to, currentPos);
-          //rotate 90 degrees to get normal Vector
-          var axis = new THREE.Vector3(0,0,1);
-          direction.applyAxisAngle(axis, -90);
-          arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
-          arrows.push(arrow);
-          scene.add(arrow);
+           for (let i = -10; i < 10; i+=2) {
+              from = new THREE.Vector3(x+i, y+i, z)
+              to = new THREE.Vector3(x + i, y + i, z)
+              var currentPos = new THREE.Vector3(0,0,z);
+              direction = new THREE.Vector3().sub(to, currentPos);
+              //rotate 90 degrees to get normal Vector
+              var axis = new THREE.Vector3(0,0,1);
+              direction.applyAxisAngle(axis, -90);
+              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+              arrows.push(arrow);
+              scene.add(arrow);
+          };
         };
       };
     };
@@ -123,7 +132,7 @@ function setup3(){
   // scene.add( sphere );
   const disc = new THREE.CircleGeometry(6, 30);
   const lineMaterial = new THREE.LineDashedMaterial( {
-    	color: 0x000000,
+    	color: 0x0000,
     	linewidth: 1,
     	scale: 1,
     	dashSize: 3,
@@ -140,30 +149,8 @@ function setup3(){
   // var arrowHelper = new THREE.ArrowHelper( dir, origin, 10, 0x6d2aff );
   // scene.add( arrowHelper );
 
-  arrows = [];
-  d=null;
-  ori=null;
-  arrow=null;
 
-  // arrows
-  for (let z = -10; z < 11; z+=step) {
-    for (let x = -num; x < num + 1; x+=step) {
-      for (let y = -num; y < num + 1; y+=step) {
-         if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
-          from = new THREE.Vector3(x, y, z)
-          to = new THREE.Vector3(x + 1, y + 1, z)
-          var currentPos = new THREE.Vector3(0,0,z);
-          direction = new THREE.Vector3().sub(to, currentPos);
-          //rotate 90 degrees to get normal Vector
-          var axis = new THREE.Vector3(0,0,1);
-          direction.applyAxisAngle(axis, -90);
-          arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
-          arrows.push(arrow);
-          scene.add(arrow);
-        };
-      };
-    };
-  };
+
 
 }
 
@@ -231,6 +218,7 @@ var getChoice = function(e) {
      redraw();
 		 //LINE
 		 setup1();
+
    }
    if (choice == "movecharge") {
      redraw();
