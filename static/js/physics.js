@@ -62,7 +62,11 @@ function setup1(){
             for (let i = -10; i < 10; i+=2) {
               from = new THREE.Vector3(x+i, y+i, z)
               // to = new THREE.Vector3(x+1, y+1+i, z)
+<<<<<<< HEAD
               to = new THREE.Vector3(x+i, y+i, z)
+=======
+              to = new THREE.Vector3(x+1, y+i+1, z)
+>>>>>>> 9fbdac6393f4606d0aee78ba0fc5a5bc26dbc1de
               var currentPos = new THREE.Vector3(0,0,z);
               direction = new THREE.Vector3().sub(to, currentPos);
               //rotate 90 degrees to get normal Vector
@@ -130,6 +134,7 @@ function setup3(){
   // var material = new THREE.MeshBasicMaterial( {color: 0xFFA500} );
   // var sphere = new THREE.Mesh( geometry, material );
   // scene.add( sphere );
+<<<<<<< HEAD
   const disc = new THREE.CircleGeometry(6, 30);
   const lineMaterial = new THREE.LineDashedMaterial( {
     	color: 0x0000,
@@ -140,6 +145,17 @@ function setup3(){
     } ) ;
   const e = new THREE.LineLoop(disc, lineMaterial);
   scene.add(e);
+=======
+  const disc = new THREE.EdgesGeometry(new THREE.CircleGeometry(6, 30));
+  const lineMaterial = new THREE.LineBasicMaterial({
+       transparent: true,
+       color: 0x000000,
+       linewidth: 1.5
+  });
+  const circ = new THREE.LineSegments(disc, lineMaterial);
+  circ.rotation.z = THREE.Math.degToRad(90);
+  scene.add(circ);
+>>>>>>> 9fbdac6393f4606d0aee78ba0fc5a5bc26dbc1de
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
   // var dir = new THREE.Vector3( 0, 0, -20 );
@@ -161,9 +177,10 @@ function setup4() {
   var rbnWidth = .1;
   var rbnThickness = 0.05;
   var rbnSteps = 10;
-  var rbnStepLength = 1.5;
+  var rbnStepLength = 2;
   var rbnSegsPerStep = 50;
-  var rbnRadius = 1;
+  var rbnRadius = 5;
+  var radius;
 
   var rbnGeom = new THREE.BoxGeometry(rbnSteps * Math.PI * 2, rbnWidth, rbnThickness, rbnSteps * rbnSegsPerStep, 1, 1);
   rbnGeom.computeBoundingBox();
@@ -175,23 +192,68 @@ function setup4() {
 
   rbnGeom.vertices.forEach(v => {
     let angle = -v.x;
-    let radius = rbnRadius + v.z;
+    radius = rbnRadius + v.z;
     let shift = (v.x / (Math.PI * 2)) * rbnStepLength + v.y;
-
     v.x = Math.cos(angle) * radius;
     v.y = shift;
     v.z = Math.sin(angle) * radius;
   });
-
   rbnGeom.computeFaceNormals();
   rbnGeom.computeVertexNormals();
-
   rbnGeom.center();
-
-
   var ribbon = new THREE.Mesh(rbnGeom, new THREE.MeshStandardMaterial({color: 0x0099ff}));
   scene.add(ribbon);
-  render();
+
+  arrows = [];
+  d=null;
+  ori=null;
+  arrow=null;
+
+  // for (let z = -10; z < 10; z+=2) {
+  //   for (let x = -num; x < num + 1; x+=step) {
+  //     for (let y = -num; y < num + 1; y+=step) {
+  //        if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
+  //         for (let i = -5; i < 5; i+=1) {
+  //           from = new THREE.Vector3(x, y+i, z)
+  //           // to = new THREE.Vector3(x+1, y+1+i, z)
+  //           to = new THREE.Vector3(x, y+i, z)
+  //           var currentPos = new THREE.Vector3(0,0,z);
+  //           direction = new THREE.Vector3().sub(to, currentPos);
+  //           //rotate 90 degrees to get normal Vector
+  //           var axis = new THREE.Vector3(0,0,1);
+  //           direction.applyAxisAngle(axis, -90);
+  //           arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
+  //           arrows.push(arrow);
+  //           scene.add(arrow);
+  //       };
+  //     };
+  //   };
+  // };
+  // };
+
+  for (let y = -radius; y < radius; y+=1){
+
+    //curly code
+    // from = new THREE.Vector3(0, y, 0);
+    // to = new THREE.Vector3(1, y, 1);
+    // var currentPos = new THREE.Vector3(0,0,1);
+    // direction = new THREE.Vector3().sub(to, currentPos);
+    // // var axis = new THREE.Vector3(0,0,1);
+    // // direction.applyAxisAngle(axis, -90);
+    // arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
+    // arrows.push(arrow);
+    // scene.add(arrow);
+
+    from = new THREE.Vector3(0, y, 0);
+    to = new THREE.Vector3(1, y, 1);
+    // var currentPos = new THREE.Vector3(0,0,1);
+    direction = new THREE.Vector3().sub(to, from);
+    var axis = new THREE.Vector3(0,1,0);
+    direction.applyAxisAngle(axis, -90);
+    arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
+    arrows.push(arrow);
+    scene.add(arrow);
+  }
 }
 
 
