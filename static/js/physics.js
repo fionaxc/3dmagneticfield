@@ -21,6 +21,7 @@ camera.lookAt(center);
 var angle;
 var arrows;
 var current;
+var fstrength;
 var d;
 var ori;
 var arrow ;
@@ -28,26 +29,74 @@ var num = 10;
 var step = 1;
 var direction;
 var vdens;
+var bval;
+var length;
 
 currentrange.addEventListener("click", function(e){
-  updateAngle();
+  var choice = document.getElementById("options").value;
+  if (choice == "linecur") {
+    updateAngle();
+  }
 })
 
 function updateAngle(){
-  var current = document.getElementById("currentrange").value;
+  current = document.getElementById("currentrange").value;
   angle = (current < 0 ? 90 : -90);
   clearThree(scene);
   setup1();
 }
 
-vectordensity.addEventListener("click", function(e){
-  updateVdens();
+lengthrange.addEventListener("click", function(e){
+  var choice = document.getElementById("options").value;
+  if (choice == "linecur"){
+    updateLength();
+  }
 })
 
-function updateVdens(){
+function updateLength(){
+  length = document.getElementById("lengthrange").value;
+  clearThree(scene);
+  setup1();
+}
+
+vectordensity.addEventListener("click", function(e){
+  var choice = document.getElementById("options").value;
+  if (choice == "linecur") {
+    updateVdens1();
+  }
+  if (choice == "movecharge") {
+    updateVdens2();
+  }
+  if (choice == "loopcur") {
+    updateVdens3();
+  }
+  if (choice == "solenoid") {
+    updateVdens4();
+  }
+})
+
+function updateVdens1(){
   vdens = document.getElementById("vectordensity").value;
   clearThree(scene);
   setup1();
+}
+
+function updateVdens2(){
+  vdens = document.getElementById("vectordensity").value;
+  clearThree(scene);
+  setup2();
+}
+
+function updateVdens3(){
+  vdens = document.getElementById("vectordensity").value;
+  clearThree(scene);
+  setup3();
+}
+
+function updateVdens4(){
+  vdens = document.getElementById("vectordensity").value;
+  clearThree(scene);
+  setup4();
 }
 
 
@@ -61,6 +110,7 @@ function setup1(){
     output.innerHTML = this.value;
   }
 
+
   current = output.innerHTML;
 
   var axesHelper = new THREE.AxesHelper( 3 );
@@ -68,8 +118,8 @@ function setup1(){
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
   // var from = new THREE.Vector3(-100,-50,-100);ow
   // var to = new THREE.Vector3(0,0,0);
-  var sourcePos = new THREE.Vector3(0, 0, 10);
-  var targetPos = new THREE.Vector3(0, 0, -10);
+  var sourcePos = new THREE.Vector3(0, 0, length);
+  var targetPos = new THREE.Vector3(0, 0, -1 * length);
   var direction = new THREE.Vector3().sub(targetPos, sourcePos);
   var currentArrow = new THREE.ArrowHelper(direction.clone().normalize(), sourcePos, direction.length(), 0x00ff00, 0.2, 1);
   currentArrow.line.material.linewidth = 50;
@@ -83,7 +133,7 @@ function setup1(){
 
   // arrows
   // for (let num=10; num<16; num+=1) {
-    for (let z = -10*vdens; z < 10*vdens; z+=step) {
+    for (let z = -1 * length; z < length; z+=step/vdens) {
       for (let x = -num; x < num + 1; x+=step) {
         for (let y = -num; y < num + 1; y+=step) {
            if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
@@ -96,6 +146,10 @@ function setup1(){
               //rotate 90 degrees to get normal Vector
               var axis = new THREE.Vector3(0,0,1);
               direction.applyAxisAngle(axis, angle);
+              var material = new THREE.LineBasicMaterial( {
+                color: 0x6d2aff,
+                linewidth: 5,
+              } )
               arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
               arrows.push(arrow);
               scene.add(arrow);
@@ -128,7 +182,7 @@ function setup2(){
   arrow=null;
 
   // arrows
-  for (let z = -10; z < 10; z+=step) {
+  for (let z = -10; z < 10; z+=step/vdens) {
     for (let x = -num; x < num + 1; x+=step) {
       for (let y = -num; y < num + 1; y+=step) {
          if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
@@ -328,19 +382,23 @@ var getChoice = function(e) {
    if (choice == "linecur") {
      redraw();
      updateAngle();
-     updateVdens();
+     updateVdens1();
+     updateLength();
      setup1();
    }
    if (choice == "movecharge") {
      redraw();
+     updateVdens2();
      setup2();
    }
 	 if (choice == "loopcur") {
      redraw();
+     updateVdens3();
      setup3();
 	 }
 	 if (choice == "solenoid") {
      redraw();
+     updateVdens4();
      setup4();
 	 }
  }
