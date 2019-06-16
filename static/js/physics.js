@@ -18,7 +18,6 @@ camera.updateProjectionMatrix();
 var center = new THREE.Vector3();
 camera.lookAt(center);
 
-
 var arrows;
 var d;
 var ori;
@@ -28,13 +27,18 @@ var step = 1;
 var direction;
 
 function setup1(){
-  var slider = document.getElementById("myRange");
-  var output = document.getElementById("demo");
+
+  var slider = document.getElementById("currentrange");
+  var output = document.getElementById("currentslider");
   output.innerHTML = slider.value;
 
-  slider.oninput = function() {
+  slider.oninput = function(){
     output.innerHTML = this.value;
   }
+
+  current = output.innerHTML;
+  console.log(current);
+
   var axesHelper = new THREE.AxesHelper( 3 );
   scene.add( axesHelper );
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -43,7 +47,7 @@ function setup1(){
   var sourcePos = new THREE.Vector3(0, 0, 10);
   var targetPos = new THREE.Vector3(0, 0, -10);
   var direction = new THREE.Vector3().sub(targetPos, sourcePos);
-  var currentArrow = new THREE.ArrowHelper(direction.clone().normalize(), sourcePos, direction.length(), 0x00ff00, 0.2, 0.5);
+  var currentArrow = new THREE.ArrowHelper(direction.clone().normalize(), sourcePos, direction.length(), 0x00ff00, 0.2, 1);
   currentArrow.line.material.linewidth = 50;
   scene.add(currentArrow);
 
@@ -55,24 +59,20 @@ function setup1(){
 
   // arrows
   // for (let num=10; num<16; num+=1) {
-    for (let z = -10; z < 10; z+=step) {
+    for (let z = -10; z < 10; z+=2) {
       for (let x = -num; x < num + 1; x+=step) {
         for (let y = -num; y < num + 1; y+=step) {
            if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
             for (let i = -10; i < 10; i+=2) {
               from = new THREE.Vector3(x+i, y+i, z)
               // to = new THREE.Vector3(x+1, y+1+i, z)
-<<<<<<< HEAD
               to = new THREE.Vector3(x+i, y+i, z)
-=======
-              to = new THREE.Vector3(x+1, y+i+1, z)
->>>>>>> 9fbdac6393f4606d0aee78ba0fc5a5bc26dbc1de
               var currentPos = new THREE.Vector3(0,0,z);
               direction = new THREE.Vector3().sub(to, currentPos);
               //rotate 90 degrees to get normal Vector
               var axis = new THREE.Vector3(0,0,1);
               direction.applyAxisAngle(axis, -90);
-              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
               arrows.push(arrow);
               scene.add(arrow);
           };
@@ -134,28 +134,15 @@ function setup3(){
   // var material = new THREE.MeshBasicMaterial( {color: 0xFFA500} );
   // var sphere = new THREE.Mesh( geometry, material );
   // scene.add( sphere );
-<<<<<<< HEAD
-  const disc = new THREE.CircleGeometry(6, 30);
-  const lineMaterial = new THREE.LineDashedMaterial( {
-    	color: 0x0000,
-    	linewidth: 1,
-    	scale: 1,
-    	dashSize: 3,
-    	gapSize: 1,
-    } ) ;
-  const e = new THREE.LineLoop(disc, lineMaterial);
-  scene.add(e);
-=======
   const disc = new THREE.EdgesGeometry(new THREE.CircleGeometry(6, 30));
   const lineMaterial = new THREE.LineBasicMaterial({
        transparent: true,
-       color: 0x000000,
-       linewidth: 1.5
+       color: 0xAFEEEE,
+       linewidth: 50,
   });
   const circ = new THREE.LineSegments(disc, lineMaterial);
   circ.rotation.z = THREE.Math.degToRad(90);
   scene.add(circ);
->>>>>>> 9fbdac6393f4606d0aee78ba0fc5a5bc26dbc1de
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
   // var dir = new THREE.Vector3( 0, 0, -20 );
@@ -201,7 +188,7 @@ function setup4() {
   rbnGeom.computeFaceNormals();
   rbnGeom.computeVertexNormals();
   rbnGeom.center();
-  var ribbon = new THREE.Mesh(rbnGeom, new THREE.MeshStandardMaterial({color: 0x0099ff}));
+  var ribbon = new THREE.Mesh(rbnGeom, new THREE.MeshBasicMaterial({color: 0xAFEEEE}));
   scene.add(ribbon);
 
   arrows = [];
@@ -209,27 +196,6 @@ function setup4() {
   ori=null;
   arrow=null;
 
-  // for (let z = -10; z < 10; z+=2) {
-  //   for (let x = -num; x < num + 1; x+=step) {
-  //     for (let y = -num; y < num + 1; y+=step) {
-  //        if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
-  //         for (let i = -5; i < 5; i+=1) {
-  //           from = new THREE.Vector3(x, y+i, z)
-  //           // to = new THREE.Vector3(x+1, y+1+i, z)
-  //           to = new THREE.Vector3(x, y+i, z)
-  //           var currentPos = new THREE.Vector3(0,0,z);
-  //           direction = new THREE.Vector3().sub(to, currentPos);
-  //           //rotate 90 degrees to get normal Vector
-  //           var axis = new THREE.Vector3(0,0,1);
-  //           direction.applyAxisAngle(axis, -90);
-  //           arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
-  //           arrows.push(arrow);
-  //           scene.add(arrow);
-  //       };
-  //     };
-  //   };
-  // };
-  // };
 
   for (let y = -radius; y < radius; y+=1){
 
@@ -278,7 +244,6 @@ var getChoice = function(e) {
    clearThree(scene);
    if (choice == "linecur") {
      redraw();
-		 //LINE
 		 setup1();
 
    }
