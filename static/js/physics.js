@@ -23,7 +23,6 @@ var arrows;
 var d;
 var ori;
 var arrow;
-var counter;
 var num = 10;
 var step = 1;
 var direction;
@@ -92,7 +91,6 @@ function setup2(){
   d=null;
   ori=null;
   arrow=null;
-  counter = 0;
 
   // arrows
   for (let z = -10; z < 11; z+=step) {
@@ -109,10 +107,6 @@ function setup2(){
           arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
           arrows.push(arrow);
           scene.add(arrow);
-          counter+=1;
-          if (counter > Math.floor(Math.pow(((num+1) / step), 3))) {
-            break;
-          };
         };
       };
     };
@@ -127,28 +121,29 @@ function setup3(){
   // var material = new THREE.MeshBasicMaterial( {color: 0xFFA500} );
   // var sphere = new THREE.Mesh( geometry, material );
   // scene.add( sphere );
-  const disc = new THREE.CircleGeometry(6, 6);
-  const lineMaterial = new THREE.LineBasicMaterial({
-     // transparent: true,
-     color: 0x000000,
-     linewidth: 1.5
-   });
-   const e = new THREE.LineLoop(disc, lineMaterial);
-   scene.add(e);
+  const disc = new THREE.CircleGeometry(6, 30);
+  const lineMaterial = new THREE.LineDashedMaterial( {
+    	color: 0x000000,
+    	linewidth: 1,
+    	scale: 1,
+    	dashSize: 3,
+    	gapSize: 1,
+    } ) ;
+  const e = new THREE.LineLoop(disc, lineMaterial);
+  scene.add(e);
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-  var dir = new THREE.Vector3( 0, 0, -20 );
-  //normalize the direction vector (convert to vector of length 1)
-  dir.normalize();
-  var origin = new THREE.Vector3( 0, 0, 0 );
-  var arrowHelper = new THREE.ArrowHelper( dir, origin, 10, 0x6d2aff );
-  scene.add( arrowHelper );
+  // var dir = new THREE.Vector3( 0, 0, -20 );
+  // //normalize the direction vector (convert to vector of length 1)
+  // dir.normalize();
+  // var origin = new THREE.Vector3( 0, 0, 0 );
+  // var arrowHelper = new THREE.ArrowHelper( dir, origin, 10, 0x6d2aff );
+  // scene.add( arrowHelper );
 
   arrows = [];
   d=null;
   ori=null;
   arrow=null;
-  counter = 0;
 
   // arrows
   for (let z = -10; z < 11; z+=step) {
@@ -165,15 +160,51 @@ function setup3(){
           arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
           arrows.push(arrow);
           scene.add(arrow);
-          counter+=1;
-          if (counter > Math.floor(Math.pow(((num+1) / step), 3))) {
-            break;
-          };
         };
       };
     };
   };
 
+}
+
+function setup4() {
+  var axesHelper = new THREE.AxesHelper( 3 );
+  scene.add( axesHelper );
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+  var rbnWidth = .1;
+  var rbnThickness = 0.05;
+  var rbnSteps = 10;
+  var rbnStepLength = 1.5;
+  var rbnSegsPerStep = 50;
+  var rbnRadius = 1;
+
+  var rbnGeom = new THREE.BoxGeometry(rbnSteps * Math.PI * 2, rbnWidth, rbnThickness, rbnSteps * rbnSegsPerStep, 1, 1);
+  rbnGeom.computeBoundingBox();
+  var size = new THREE.Vector3();
+  rbnGeom.boundingBox.getSize(size);
+  rbnGeom.translate(size.x * 0.5, size.y * 0.5, size.z * 0.5);
+
+  // bend it!
+
+  rbnGeom.vertices.forEach(v => {
+    let angle = -v.x;
+    let radius = rbnRadius + v.z;
+    let shift = (v.x / (Math.PI * 2)) * rbnStepLength + v.y;
+
+    v.x = Math.cos(angle) * radius;
+    v.y = shift;
+    v.z = Math.sin(angle) * radius;
+  });
+
+  rbnGeom.computeFaceNormals();
+  rbnGeom.computeVertexNormals();
+
+  rbnGeom.center();
+
+
+  var ribbon = new THREE.Mesh(rbnGeom, new THREE.MeshStandardMaterial({color: 0x0099ff}));
+  scene.add(ribbon);
+  render();
 }
 
 
