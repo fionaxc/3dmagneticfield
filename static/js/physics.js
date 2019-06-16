@@ -27,6 +27,7 @@ var arrow ;
 var num = 10;
 var step = 1;
 var direction;
+var vdens;
 
 currentrange.addEventListener("click", function(e){
   updateAngle();
@@ -35,6 +36,16 @@ currentrange.addEventListener("click", function(e){
 function updateAngle(){
   var current = document.getElementById("currentrange").value;
   angle = (current < 0 ? 90 : -90);
+  clearThree(scene);
+  setup1();
+}
+
+vectordensity.addEventListener("click", function(e){
+  updateVdens();
+})
+
+function updateVdens(){
+  vdens = document.getElementById("vectordensity").value;
   clearThree(scene);
   setup1();
 }
@@ -72,7 +83,7 @@ function setup1(){
 
   // arrows
   // for (let num=10; num<16; num+=1) {
-    for (let z = -10; z < 10; z+=2) {
+    for (let z = -10*vdens; z < 10*vdens; z+=step) {
       for (let x = -num; x < num + 1; x+=step) {
         for (let y = -num; y < num + 1; y+=step) {
            if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
@@ -317,6 +328,7 @@ var getChoice = function(e) {
    if (choice == "linecur") {
      redraw();
      updateAngle();
+     updateVdens();
      setup1();
    }
    if (choice == "movecharge") {
