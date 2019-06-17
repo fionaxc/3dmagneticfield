@@ -342,8 +342,8 @@ function setup3(){
              var currentPos = new THREE.Vector3(x+ax,0,z+ay);
              direction = new THREE.Vector3().subVectors(to, currentPos);
              //rotate 90 degrees to get normal Vector
-             var axis = new THREE.Vector3(0, 0, 1);
-             direction.applyAxisAngle(axis, -90);
+             var axis = new THREE.Vector3(0, 1, 0);
+             direction.applyAxisAngle(axis, 90);
              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
              arrows.push(arrow);
              scene.add(arrow);
@@ -364,8 +364,8 @@ function setup3(){
              var currentPos = new THREE.Vector3(x+ax,y+ay,0);
              direction = new THREE.Vector3().subVectors(to, currentPos);
              //rotate 90 degrees to get normal Vector
-             var axis = new THREE.Vector3(1,0,0);
-             direction.applyAxisAngle(axis, -90);
+             var axis = new THREE.Vector3(0,0,1);
+             direction.applyAxisAngle(axis, 90);
              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
              arrows.push(arrow);
              scene.add(arrow);
@@ -568,27 +568,51 @@ function setup4() {
     arrows.push(arrow);
     scene.add(arrow);
   }
-  // for (let z = -10*vdens; z < 10*vdens; z+=step) {
-  //   for (let x = -num; x < num + 1; x+=step) {
-  //     for (let y = -num; y < num + 1; y+=step) {
-  //        if (Math.pow(x, 2) + Math.pow(y, 2) == Math.pow(num, 2)) {
-  //         for (let i = -10; i < 10; i+=2) {
-  //           from = new THREE.Vector3(x+i, y+i, z)
-  //           // to = new THREE.Vector3(x+1, y+1+i, z)
-  //           to = new THREE.Vector3(x+i, y+i, z)
-  //           var currentPos = new THREE.Vector3(0,0,z);
-  //           direction = new THREE.Vector3().sub(to, currentPos);
-  //           //rotate 90 degrees to get normal Vector
-  //           var axis = new THREE.Vector3(0,0,1);
-  //           direction.applyAxisAngle(axis, angle);
-  //           arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 2,  0x6d2aff, 0.10, 0.2, 0.2);
-  //           arrows.push(arrow);
-  //           scene.add(arrow);
-  //       };
-  //     };
-  //   };
-  // };
-  // };
+
+  for (let i = radius; i < radius+5; i+=step) {
+    draw_ellipse('z',i);
+  }
+  function draw_ellipse(axis, val) {
+    var ax=0;
+    var ay=0;
+    var xrad=0;
+    var yrad=0;
+    if (axis=='x') {
+      xrad = val;
+      ax=-xrad;
+      xrad = (xrad < 0 ? -xrad : xrad);
+      yrad = 2*xrad;
+    }
+    else{
+      yrad = val;
+      ay=-yrad;
+      yrad = (yrad < 0 ? -yrad : yrad);
+      xrad=2*yrad;
+    }
+    var curve = new THREE.EllipseCurve(
+      ax,  ay,            // ax, aY
+      xrad, yrad,           // xRadius, yRadius
+      0,  2 * Math.PI,  // aStartAngle, aEndAngle
+      false,            // aClockwise
+      0                 // aRotation
+    );
+
+    var points = curve.getPoints( 50 );
+    var geometry = new THREE.BufferGeometry().setFromPoints( points );
+
+    var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+
+    // Create the final object to add to the scene
+    var ellipse = new THREE.Line( geometry, material );
+    scene.add(ellipse);
+    if (axis=='x') {
+      ellipse.rotation.x = Math.PI/2;
+    }
+    else {
+      ellipse.rotation.y = Math.PI/2;
+    }
+  }
+
 }
 
 
