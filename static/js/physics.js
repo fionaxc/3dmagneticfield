@@ -365,6 +365,7 @@ function setup3(){
              var axis = new THREE.Vector3(0, 1, 0);
              direction.applyAxisAngle(axis, 90);
              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+             arrow.rotation.x = Math.PI/2;
              arrows.push(arrow);
              scene.add(arrow);
          };
@@ -379,15 +380,16 @@ function setup3(){
       for (let x=-num; x<num+1; x+=1) {
         for (let y=-num; y<num+1; y+=1) {
           if (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(y, 2)/Math.pow(yrad, 2) == 1) {
-             from = new THREE.Vector3(x+ax, y+ay, 0);
-             to = new THREE.Vector3(x+ax, y+ay, 0);
-             var currentPos = new THREE.Vector3(x+ax,y+ay,0);
+             from = new THREE.Vector3(0, y+ay, x+ax);
+             to = new THREE.Vector3(0, y+ay, x+ax);
+             var currentPos = new THREE.Vector3(0,y+ay,x+ax);
              direction = new THREE.Vector3().subVectors(to, currentPos);
              //rotate 90 degrees to get normal Vector
              var axis = new THREE.Vector3(0,0,1);
              direction.applyAxisAngle(axis, 90);
              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
              arrows.push(arrow);
+             arrow.rotation.x = Math.PI/2;
              scene.add(arrow);
          };
        };
@@ -661,20 +663,37 @@ function setup4() {
       for (let x=-num; x<num+1; x+=1) {
         for (let z=-num; z<num+1; z+=1) {
           if (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(z, 2)/Math.pow(zrad, 2) == 1) {
-             from = new THREE.Vector3(x+ax, 0, z+ay);
-             to = new THREE.Vector3(x+ax, 0, z+ay);
-             var currentPos = new THREE.Vector3(x+ax,0,z+ay);
+             from = new THREE.Vector3(0, z+ay, x+ax);
+             to = new THREE.Vector3(0, z+ay, x+ax);
+             var currentPos = new THREE.Vector3(0,z+ay,x+ax);
              direction = new THREE.Vector3().subVectors(to, currentPos);
              //rotate 90 degrees to get normal Vector
              var axis = new THREE.Vector3(0, 1, 0);
              direction.applyAxisAngle(axis, 90);
              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
-             arrow.rotation.z = Math.PI/2;
+             arrow.rotation.y = Math.PI/2;
              arrows.push(arrow);
              scene.add(arrow);
          };
        };
      };
+    //  for (let x=-num; x<num+1; x+=1) {
+    //    for (let z=-num; z<num+1; z+=1) {
+    //      if (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(z, 2)/Math.pow(zrad, 2) == 1) {
+    //         from = new THREE.Vector3(x+ax, z+ay, 0);
+    //         to = new THREE.Vector3(x+ax, z+ay, 0);
+    //         var currentPos = new THREE.Vector3(x+ax,z+ay,0);
+    //         direction = new THREE.Vector3().subVectors(to, currentPos);
+    //         //rotate 90 degrees to get normal Vector
+    //         var axis = new THREE.Vector3(0, 1, 0);
+    //         direction.applyAxisAngle(axis, 90);
+    //         arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+    //         arrow.rotation.y = Math.PI/2;
+    //         arrows.push(arrow);
+    //         scene.add(arrow);
+    //     };
+    //   };
+    // };
     }
     else{
       yrad=val;
