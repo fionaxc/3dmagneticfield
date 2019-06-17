@@ -31,6 +31,9 @@ var direction;
 var vdens;
 var bval;
 var length;
+var rbnRadius;
+var rbnSteps;
+var rbnStepLength;
 
 currentrange.addEventListener("click", function(e){
   var choice = document.getElementById("options").value;
@@ -48,15 +51,22 @@ function updateAngle(){
 
 lengthrange.addEventListener("click", function(e){
   var choice = document.getElementById("options").value;
-  if (choice == "linecur"){
+  if (choice == "linecur" || choice == "solenoid"){
     updateLength();
   }
 })
 
 function updateLength(){
-  length = document.getElementById("lengthrange").value;
+  var choice = document.getElementById("options").value;
   clearThree(scene);
-  setup1();
+  if (choice == "linecur"){
+    length = document.getElementById("lengthrange").value;
+    setup1();
+  }
+  else {
+    rbnSteps = document.getElementById("lengthrange").value/3;
+    setup4();
+  }
 }
 
 vectordensity.addEventListener("click", function(e){
@@ -76,7 +86,7 @@ vectordensity.addEventListener("click", function(e){
 })
 
 function updateVdens1(){
-  vdens = document.getElementById("vectordensity").value;
+  vdens = document.getElementById("vectordensity").value/5;
   clearThree(scene);
   setup1();
 }
@@ -99,6 +109,33 @@ function updateVdens4(){
   setup4();
 }
 
+document.getElementById("radiusrange").addEventListener("click", function(e){
+  var choice = document.getElementById("options").value;
+  console.log('changing');
+  if (choice == "solenoid"){
+    updateRadius();
+  }
+})
+
+function updateRadius(){
+  rbnRadius = document.getElementById("radiusrange").value;
+  clearThree(scene);
+  setup4();
+}
+
+document.getElementById("turnrange").addEventListener("click", function(e){
+  var choice = document.getElementById("options").value;
+  console.log('changing');
+  if (choice == "solenoid"){
+    updateTurns();
+  }
+})
+
+function updateTurns(){
+  rbnStepLength = document.getElementById("turnrange").value;
+  clearThree(scene);
+  setup4();
+}
 
 function setup1(){
 
@@ -109,7 +146,6 @@ function setup1(){
   slider.oninput = function(){
     output.innerHTML = this.value;
   }
-
 
   current = output.innerHTML;
 
@@ -437,15 +473,45 @@ function setup3(){
 }
 
 function setup4() {
+
+  var slider = document.getElementById("radiusrange");
+  var output = document.getElementById("radslider");
+  output.innerHTML = slider.value;
+
+  slider.oninput = function(){
+    output.innerHTML = this.value;
+  }
+
+  rbnRadius = output.innerHTML;
+
+  var slider2 = document.getElementById("lengthrange");
+  var output2 = document.getElementById("lengthslider");
+  output2.innerHTML = slider2.value;
+
+  slider2.oninput = function(){
+    output2.innerHTML = this.value;
+  }
+
+  rbnSteps = output2.innerHTML/3;
+
+  var slider3 = document.getElementById("turnrange");
+  var output3 = document.getElementById("turnslider");
+  output3.innerHTML = slider3.value;
+
+  slider3.oninput = function(){
+    output3.innerHTML = this.value;
+  }
+
+  rbnStepLength = 6-output3.innerHTML;
+
   var axesHelper = new THREE.AxesHelper( 3 );
   scene.add( axesHelper );
   var controls = new THREE.OrbitControls(camera, renderer.domElement);
   var rbnWidth = .1;
   var rbnThickness = 0.05;
-  var rbnSteps = 10;
-  var rbnStepLength = 2;
+  // var rbnSteps = 10;
+  // var rbnStepLength = 2;
   var rbnSegsPerStep = 50;
-  var rbnRadius = 5;
   var radius;
 
   var rbnGeom = new THREE.BoxGeometry(rbnSteps * Math.PI * 2, rbnWidth, rbnThickness, rbnSteps * rbnSegsPerStep, 1, 1);
@@ -458,7 +524,8 @@ function setup4() {
 
   rbnGeom.vertices.forEach(v => {
     let angle = -v.x;
-    radius = rbnRadius + v.z;
+    radius = (rbnRadius + v.z)/10;
+    console.log(v.z)
     let shift = (v.x / (Math.PI * 2)) * rbnStepLength + v.y;
     v.x = Math.cos(angle) * radius;
     v.y = shift;
@@ -478,22 +545,20 @@ function setup4() {
 
   //straight diamond
 
-  for (let y = -radius; y < radius+1; y+=step) {
-    for (let z = -2; z < 3; z+=step+0.5) {
-      cur = 0;
-      for (let x = -radius; x < radius+1; x+=step) {
-        if (cur < radius-Math.abs(y)+1) {
-          draw_arrow(x+radius, y, z);
-          draw_arrow(-x-radius, y, z);
+  yval = rbnSteps*rbnStepLength;
+
+  for (let y = -yval/2; y < yval/2; y+=step+0.5) {
+    for (let z = -2; z < 3; z+=step) {
+      for (let x = -radius/2; x < radius/2+1; x+=step) {
+        draw_arrow(x, y, z);
+        draw_arrow(-x, y, z);
       }
-      cur +=1
-    }
     }
   }
 
   function draw_arrow(x, y, z) {
     from = new THREE.Vector3(x, y, z)
-    to = new THREE.Vector3(x, y, z+1)
+    to = new THREE.Vector3(x, y, z)
     currentPos = new THREE.Vector3(x,y,z);
     direction = new THREE.Vector3().subVectors(to, currentPos);
     //rotate 90 degrees to get normal Vector
