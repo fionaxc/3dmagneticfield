@@ -12,7 +12,7 @@ var reset = document.getElementById("reset");
 // document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 
 camera.up = new THREE.Vector3(0, 1, 0);
-camera.position.set(100,100,100);
+camera.position.set(0,0,100);
 camera.zoom = 10;
 camera.updateProjectionMatrix();
 var center = new THREE.Vector3();
