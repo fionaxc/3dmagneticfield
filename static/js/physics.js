@@ -540,8 +540,6 @@ function setup4() {
   rbnGeom.boundingBox.getSize(size);
   rbnGeom.translate(size.x * 0.5, size.y * 0.5, size.z * 0.5);
 
-  // bend it!
-
   rbnGeom.vertices.forEach(v => {
     let angle = -v.x;
     radius = (rbnRadius + v.z)/10;
@@ -590,7 +588,10 @@ function setup4() {
   }
 
   for (let i = radius; i < radius+5; i+=step) {
-    draw_ellipse('z',i);
+    draw_ellipse('y',i);
+    draw_ellipse('y',-i);
+    draw_ellipse('x',i);
+    draw_ellipse('x',-i);
   }
   function draw_ellipse(axis, val) {
     var ax=0;
@@ -601,13 +602,13 @@ function setup4() {
       xrad = val;
       ax=-xrad;
       xrad = (xrad < 0 ? -xrad : xrad);
-      yrad = 2*xrad;
+      yrad =yval*xrad/5;
     }
     else{
       yrad = val;
       ay=-yrad;
       yrad = (yrad < 0 ? -yrad : yrad);
-      xrad=2*yrad;
+      xrad=yval*yrad/5;
     }
     var curve = new THREE.EllipseCurve(
       ax,  ay,            // ax, aY
@@ -626,10 +627,10 @@ function setup4() {
     var ellipse = new THREE.Line( geometry, material );
     scene.add(ellipse);
     if (axis=='x') {
-      ellipse.rotation.x = Math.PI/2;
+      ellipse.rotation.y = Math.PI/2;
     }
     else {
-      ellipse.rotation.y = Math.PI/2;
+      ellipse.rotation.z = Math.PI/2;
     }
   }
 
