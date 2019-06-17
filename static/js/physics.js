@@ -361,7 +361,7 @@ function setup3(){
 
   function draw_arrow(x, y, z) {
     from = new THREE.Vector3(x, y, z)
-    to = new THREE.Vector3(x, y, z+ (loop_dir*1))
+    to = new THREE.Vector3(x, y, z+(loop_dir*1))
     currentPos = new THREE.Vector3(x,y,z);
     direction = new THREE.Vector3().subVectors(to, currentPos);
     //rotate 90 degrees to get normal Vector
@@ -385,14 +385,17 @@ function setup3(){
     var xrad=0;
     var yrad=0;
     var zrad=0;
+    var cc=0;
+
     if (axis=='x') {
       xrad=val;
       ax=-xrad;
       xrad=(xrad < 0 ? -xrad : xrad);
       zrad=2*xrad;
       for (let x=-num; x<num+1; x+=1) {
+        cc=0;
         for (let z=-num; z<num+1; z+=1) {
-          if (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(z, 2)/Math.pow(zrad, 2) == 1) {
+          if ((cc<3 || cc>16) && (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(z, 2)/Math.pow(zrad, 2) == 1)) {
              from = new THREE.Vector3(x+ax, 0, z+ay);
              to = new THREE.Vector3(x+ax, 0, z+ay);
              var currentPos = new THREE.Vector3(x+ax,0,z+ay);
@@ -401,10 +404,11 @@ function setup3(){
              var axis = new THREE.Vector3(0, 1, 0);
              direction.applyAxisAngle(axis, 90);
              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
-             arrow.rotation.x = Math.PI/2;
+             arrow.rotation.x = Math.PI*loop_dir/2;
              arrows.push(arrow);
              scene.add(arrow);
          };
+         cc+=1;
        };
      };
     }
@@ -414,20 +418,22 @@ function setup3(){
       yrad=(yrad < 0 ? -yrad : yrad);
       xrad=2*yrad;
       for (let x=-num; x<num+1; x+=1) {
+        cc=0;
         for (let y=-num; y<num+1; y+=1) {
-          if (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(y, 2)/Math.pow(yrad, 2) == 1) {
-             from = new THREE.Vector3(0, y+ay, x+ax);
-             to = new THREE.Vector3(0, y+ay, x+ax);
-             var currentPos = new THREE.Vector3(0,y+ay,x+ax);
+          if ((cc>6 && cc<12) && Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(y, 2)/Math.pow(yrad, 2) == 1) {
+            from = new THREE.Vector3(0, y+ay, x+ax);
+            to = new THREE.Vector3(0, y+ay, x+ax);
+             var currentPos = new THREE.Vector3(0,y+ay-3,x+ax);
              direction = new THREE.Vector3().subVectors(to, currentPos);
              //rotate 90 degrees to get normal Vector
-             var axis = new THREE.Vector3(0,0,1);
+             var axis = new THREE.Vector3(0,1,0);
              direction.applyAxisAngle(axis, 90);
              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
              arrows.push(arrow);
-             arrow.rotation.x = Math.PI/2;
+             arrow.rotation.x = Math.PI*loop_dir/2;
              scene.add(arrow);
          };
+         cc+=1;
        };
      };
    };
@@ -614,13 +620,21 @@ function setup4() {
 
   function draw_arrow(x, y, z) {
     from = new THREE.Vector3(x, y, z)
-    to = new THREE.Vector3(x, y-(sol_dir*1), z-(sol_dir*1))
+    to = new THREE.Vector3(x, y, z)
     currentPos = new THREE.Vector3(x,y,z);
     var direction = new THREE.Vector3().subVectors(to, currentPos);
     //rotate 90 degrees to get normal Vector
     var axis = new THREE.Vector3(1,0,0);
     direction.applyAxisAngle(axis, 90);
     arrow = new THREE.ArrowHelper(direction.clone().normalize(),to, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+    if (sol_dir>0) {
+      arrow.rotation.y = Math.PI;
+    }
+    else{
+      arrow.rotation.x = Math.PI;
+    }
+
+    // console.log(sol_dir)
     arrows.push(arrow);
     scene.add(arrow);
   }
@@ -691,14 +705,16 @@ function setup4() {
     var xrad=0;
     var yrad=0;
     var zrad=0;
+    var cc=0;
     if (axis=='x') {
       xrad=val;
       ax=-xrad;
       xrad=(xrad < 0 ? -xrad : xrad);
       zrad=2*xrad;
       for (let x=-num; x<num+1; x+=1) {
+        cc=0;
         for (let z=-num; z<num+1; z+=1) {
-          if (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(z, 2)/Math.pow(zrad, 2) == 1) {
+          if ((cc<3 || cc>16) && Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(z, 2)/Math.pow(zrad, 2) == 1) {
              from = new THREE.Vector3(0, z+ay, x+ax);
              to = new THREE.Vector3(0, z+ay, x+ax);
              var currentPos = new THREE.Vector3(0,z+ay,x+ax);
@@ -707,10 +723,16 @@ function setup4() {
              var axis = new THREE.Vector3(0, 1, 0);
              direction.applyAxisAngle(axis, 90);
              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
-             arrow.rotation.y = Math.PI/2;
+             if (sol_dir>0) {
+               arrow.rotation.y = Math.PI;
+             }
+             else{
+               arrow.rotation.x = Math.PI;
+             }
              arrows.push(arrow);
              scene.add(arrow);
          };
+         cc+=1;
        };
      };
     //  for (let x=-num; x<num+1; x+=1) {
@@ -736,9 +758,11 @@ function setup4() {
       ay=-yrad;
       yrad=(yrad < 0 ? -yrad : yrad);
       xrad=2*yrad;
-      for (let x=-num; x<num+1; x+=1) {
-        for (let y=-num; y<num+1; y+=1) {
-          if (Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(y, 2)/Math.pow(yrad, 2) == 1) {
+      cc=0;
+      for (let y=-num; y<num+1; y+=1) {
+        cc=0;
+        for (let x=-num; x<num+1; x+=1) {
+          if ((cc>2.5 && cc<16.5) && Math.pow(x, 2)/Math.pow(xrad, 2) + Math.pow(y, 2)/Math.pow(yrad, 2) == 1) {
              from = new THREE.Vector3(x+ax, y+ay, 0);
              to = new THREE.Vector3(x+ax, y+ay, 0);
              var currentPos = new THREE.Vector3(x+ax,y+ay,0);
@@ -747,9 +771,16 @@ function setup4() {
              var axis = new THREE.Vector3(0,0,1);
              direction.applyAxisAngle(axis, 90);
              arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+             if (sol_dir>0) {
+               arrow.rotation.y = Math.PI;
+             }
+             else{
+               arrow.rotation.x = Math.PI;
+             }
              arrows.push(arrow);
              scene.add(arrow);
          };
+         cc+=1;
        };
      };
    };
