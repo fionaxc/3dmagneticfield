@@ -614,13 +614,13 @@ function setup4() {
 
   function draw_arrow(x, y, z) {
     from = new THREE.Vector3(x, y, z)
-    to = new THREE.Vector3(x, y, z)
+    to = new THREE.Vector3(x, y-(sol_dir*1), z-(sol_dir*1))
     currentPos = new THREE.Vector3(x,y,z);
-    direction = new THREE.Vector3().subVectors(to, currentPos);
+    var direction = new THREE.Vector3().subVectors(to, currentPos);
     //rotate 90 degrees to get normal Vector
-    var axis = new THREE.Vector3(0,0,1);
-    direction.applyAxisAngle(axis, -90);
-    arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
+    var axis = new THREE.Vector3(1,0,0);
+    direction.applyAxisAngle(axis, 90);
+    arrow = new THREE.ArrowHelper(direction.clone().normalize(),to, 1,  0x6d2aff, 0.10, 0.2, 0.2);
     arrows.push(arrow);
     scene.add(arrow);
   }
