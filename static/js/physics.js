@@ -34,6 +34,7 @@ var length;
 var rbnRadius;
 var rbnSteps;
 var rbnStepLength;
+var loop_radius;
 
 currentrange.addEventListener("click", function(e){
   var choice = document.getElementById("options").value;
@@ -113,14 +114,23 @@ document.getElementById("radiusrange").addEventListener("click", function(e){
   var choice = document.getElementById("options").value;
   console.log('changing');
   if (choice == "solenoid"){
-    updateRadius();
+    updateRadius1();
+  }
+  else if (choice == "loopcur"){
+    updateRadius2();
   }
 })
 
-function updateRadius(){
+function updateRadius1(){
   rbnRadius = document.getElementById("radiusrange").value;
   clearThree(scene);
   setup4();
+}
+
+function updateRadius2(){
+  loop_radius = document.getElementById("radiusrange").value;
+  clearThree(scene);
+  setup3();
 }
 
 document.getElementById("turnrange").addEventListener("click", function(e){
@@ -242,14 +252,21 @@ function setup2(){
 }
 
 function setup3(){
+  var slider = document.getElementById("radiusrange");
+  var output = document.getElementById("radslider");
+  output.innerHTML = slider.value;
+  slider.oninput = function(){
+    output.innerHTML = this.value;
+  }
+  loop_radius = output.innerHTML;
+
   var axesHelper = new THREE.AxesHelper( 3 );
   scene.add( axesHelper );
   // var geometry = new THREE.SphereGeometry( 1, 8, 8 );
   // var material = new THREE.MeshBasicMaterial( {color: 0xFFA500} );
   // var sphere = new THREE.Mesh( geometry, material );
   // scene.add( sphere );
-  var radius = 6;
-  const disc = new THREE.EdgesGeometry(new THREE.CircleGeometry(radius, 30));
+  const disc = new THREE.EdgesGeometry(new THREE.CircleGeometry(loop_radius, 30));
   const lineMaterial = new THREE.LineBasicMaterial({
        transparent: true,
        color: 0xAFEEEE,
@@ -288,20 +305,23 @@ function setup3(){
   var cur = 0;
   var currentPos;
 
+  loop_radius = parseInt(loop_radius)
+
   //straight diamond
 
-  for (let y = -radius; y < radius+1; y+=step) {
-    for (let z = -2; z < 3; z+=step+0.5) {
+  for (let y = -loop_radius; y < loop_radius+1; y+=step) {
+    for (let z = -3; z < 4; z+=step+0.5) {
       cur = 0;
-      for (let x = -radius; x < radius+1; x+=step) {
-        if (cur < radius-Math.abs(y)+1) {
-          draw_arrow(x+radius, y, z);
-          draw_arrow(-x-radius, y, z);
-      }
+      for (let x = -loop_radius; x < loop_radius+1; x+=step) {
+        if (cur < loop_radius-Math.abs(y)+1) {
+          draw_arrow(-x-loop_radius, y, z);
+          draw_arrow(x+loop_radius, y, z);
+          // draw_arrow(-x-radius, y, z);
+      };
       cur +=1
-    }
-    }
-  }
+    };
+  };
+};
 
   function draw_arrow(x, y, z) {
     from = new THREE.Vector3(x, y, z)
@@ -415,7 +435,7 @@ function setup3(){
   //   };
   // };
 
-  for (let i = radius/2; i < radius/2+5; i+=step) {
+  for (let i = loop_radius/2; i < loop_radius/2+5; i+=step) {
     draw_ellipse('x',i);
     draw_ellipse('x',-i);
     draw_ellipse('y',i);
@@ -548,7 +568,7 @@ function setup4() {
   yval = rbnSteps*rbnStepLength;
 
   for (let y = -yval/2; y < yval/2; y+=step+0.5) {
-    for (let z = -2; z < 3; z+=step) {
+    for (let z = -radius/2; z < radius/2+1; z+=step) {
       for (let x = -radius/2; x < radius/2+1; x+=step) {
         draw_arrow(x, y, z);
         draw_arrow(-x, y, z);
