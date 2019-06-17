@@ -35,6 +35,8 @@ var rbnRadius;
 var rbnSteps;
 var rbnStepLength;
 var loop_radius;
+var loop_dir = 1;
+var sol_dir = 1;
 
 currentrange.addEventListener("click", function(e){
   var choice = document.getElementById("options").value;
@@ -143,6 +145,40 @@ document.getElementById("turnrange").addEventListener("click", function(e){
 
 function updateTurns(){
   rbnStepLength = document.getElementById("turnrange").value;
+  clearThree(scene);
+  setup4();
+}
+
+document.getElementById("ccw").addEventListener("click", function(e){
+  var choice = document.getElementById("options").value;
+  if(choice == "loopcur"){
+    loop_dir = 1;
+    updateDir3();
+  }
+  if(choice == "solenoid"){
+    sol_dir = 1;
+    updateDir4();
+  }
+})
+
+document.getElementById("cw").addEventListener("click", function(e){
+  var choice = document.getElementById("options").value;
+  if(choice == "loopcur"){
+    loop_dir = -1;
+    updateDir3();
+  }
+  if(choice == "solenoid"){
+    sol_dir = -1;
+    updateDir4();
+  }
+})
+
+function updateDir3(){
+  clearThree(scene);
+  setup3();
+}
+
+function updateDir4(){
   clearThree(scene);
   setup4();
 }
@@ -325,7 +361,7 @@ function setup3(){
 
   function draw_arrow(x, y, z) {
     from = new THREE.Vector3(x, y, z)
-    to = new THREE.Vector3(x, y, z+1)
+    to = new THREE.Vector3(x, y, z+ (loop_dir*1))
     currentPos = new THREE.Vector3(x,y,z);
     direction = new THREE.Vector3().subVectors(to, currentPos);
     //rotate 90 degrees to get normal Vector
@@ -583,7 +619,7 @@ function setup4() {
     direction = new THREE.Vector3().subVectors(to, currentPos);
     //rotate 90 degrees to get normal Vector
     var axis = new THREE.Vector3(0,0,1);
-    direction.applyAxisAngle(axis, 90);
+    direction.applyAxisAngle(axis, -90);
     arrow = new THREE.ArrowHelper(direction.clone().normalize(),from, 1,  0x6d2aff, 0.10, 0.2, 0.2);
     arrows.push(arrow);
     scene.add(arrow);
@@ -670,11 +706,13 @@ var getChoice = function(e) {
 	 if (choice == "loopcur") {
      redraw();
      updateVdens3();
+     updateDir3();
      setup3();
 	 }
 	 if (choice == "solenoid") {
      redraw();
      updateVdens4();
+     updateDir4();
      setup4();
 	 }
  }
